@@ -90,8 +90,4 @@ const e = overlapElectricField(E1,e3);
 render(e);
 
 document.write("(x,y)=(",x1,",",y1,"),(",x2,",",y2,"),(",x3,",",y3,")")
-//document.write("</br>template[540][960]=",template[540][960])
-//document.write("</br>template[540][2880]=",template[540][2880])
-//document.write("</br>template[1620][960]=",template[1620][960])
-//document.write("</br>template[1620][2880]=",template[1620][2880])
 

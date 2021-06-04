@@ -22,7 +22,8 @@ const makeElectricFieldTemplate = gpu.createKernel(function() {
   //電荷からの距離の-2乗
   const ri = 1/(x*x + y*y);
   //1[C]の電荷による電界値
-  return [Math.pow(ri , 3/2)*y*this.constants.k,Math.pow(ri , 3/2)*x*this.constants.k];
+  const k = this.constants.k;
+  return [Math.pow(ri , 3/2)*y*k,Math.pow(ri , 3/2)*x*k];
 }, {
   //定数の受け渡し
   constants: { k: electricConstant , w: fhdWidth , h: fhdHeight },
@@ -33,7 +34,11 @@ const makeElectricFieldTemplate = gpu.createKernel(function() {
 
 //(x,y)に電界テンプレートの中心を設定して(1920,1080)の配列を作成
 const makeElectricField = gpu.createKernel(function(template,x,y) {
-  return [template[this.constants.h-y+this.thread.y][this.constants.w-x+this.thread.x][0],template[this.constants.h-y+this.thread.y][this.constants.w-x+this.thread.x][1]];
+  const h = this.constants.h;
+  const w = this.constants.w;
+  const xa = this.thread.x;
+  const ya = this.thread.y;
+  return [template[h-y+ya][w-x+xa][0],template[h-y+ya][w-x+xa][1]];
 }, {
   constants: { w: fhdWidth , h: fhdHeight },
   output: [fhdWidth,fhdHeight]
@@ -43,15 +48,19 @@ const makeElectricField = gpu.createKernel(function(template,x,y) {
 //makeElectricFieldで作った(1920,1080)の配列を複数個足す
 /*このままだと複数個の配列を入力できないので三重配列にするなり考える必要がある*/
 const overlapElectricField = gpu.createKernel(function(electric_field1,electric_field2) {
-  return [electric_field1[this.thread.y][this.thread.x][0]+electric_field2[this.thread.y][this.thread.x][0],electric_field1[this.thread.y][this.thread.x][1]+electric_field2[this.thread.y][this.thread.x][1]];
+  const xa = this.thread.x;
+  const ya = this.thread.y;
+  return [electric_field1[ya][xa][0]+electric_field2[ya][xa][0],electric_field1[ya][xa][1]+electric_field2[ya][xa][1]];
 }, {
   output: [fhdWidth,fhdHeight]
 });
 
 //canvasへ配列を表示
 const render = gpuCanvas.createKernel(function(board) {
+  const xa = this.thread.x;
+  const ya = this.thread.y;
   //値の変化がわかる範囲(0->255)に落とす
-  let color = Math.sqrt(board[this.thread.y][this.thread.x][0]*board[this.thread.y][this.thread.x][0]+board[this.thread.y][this.thread.x][1]*board[this.thread.y][this.thread.x][1])*this.constants.k;
+  let color = Math.sqrt(board[ya][xa][0]*board[ya][xa][0]+board[ya][xa][1]*board[ya][xa][1])*this.constants.k;
   this.color(
     //Red値
     color,

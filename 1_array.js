@@ -31,30 +31,6 @@ const makeElectricFieldTemplate = gpu.createKernel(function() {
   output: [2*fhdWidth+1,2*fhdHeight+1]
 });
 
-/*
-//(x,y)に電界テンプレートの中心を設定して(1920,1080)の配列を作成
-const makeElectricField = gpu.createKernel(function(template,x,y) {
-  const h = this.constants.h;
-  const w = this.constants.w;
-  const xa = this.thread.x;
-  const ya = this.thread.y;
-  return [template[h-y+ya][w-x+xa][0],template[h-y+ya][w-x+xa][1]];
-}, {
-  constants: { w: fhdWidth , h: fhdHeight },
-  output: [fhdWidth,fhdHeight]
-});
-*/
-
-//makeElectricFieldで作った(1920,1080)の配列を複数個足す
-/*このままだと複数個の配列を入力できないので三重配列にするなり考える必要がある
-const overlapElectricField = gpu.createKernel(function(electric_field1,electric_field2) {
-  const xa = this.thread.x;
-  const ya = this.thread.y;
-  return [electric_field1[ya][xa][0]+electric_field2[ya][xa][0],electric_field1[ya][xa][1]+electric_field2[ya][xa][1]];
-}, {
-  output: [fhdWidth,fhdHeight]
-});
-*/
 
 //canvasへ配列を表示
 const render = gpuCanvas.createKernel(function(board) {
@@ -81,27 +57,7 @@ const render = gpuCanvas.createKernel(function(board) {
   graphical:true
 });
 
-//const x1 = 0;
-//const y1 = 1080;
-//const x2 = 1920/2;
-//const y2 = 1080/2;
-//const x3 = 1920;
-//const y3 = 0;
-
-//実行
-//const template = makeElectricField(makeElectricFieldTemplate(),x1,y1);
-//render(template);
-
-//配列を作ってpushしていく事でn個の配列の重ね合わせに対応させる。下とかの例。
-//const ef = [];
-//ef.push(e1);
-
 const e1 = makeElectricFieldTemplate();
-//const e2 = makeElectricField(makeElectricFieldTemplate(),x2,y2);
-//const e3 = makeElectricField(makeElectricFieldTemplate(),x3,y3);
-//const E1 = overlapElectricField(e1,e2);
-//const E2 = overlapElectricField(E1,e3);
 
 render(e1);
 
-//document.write("(x,y)=(",x1,",",y1,"),(",x2,",",y2,"),(",x3,",",y3,")")

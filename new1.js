@@ -91,12 +91,16 @@ const y3 = 0;
 //const template = makeElectricField(makeElectricFieldTemplate(),x1,y1);
 //render(template);
 
+//配列を作ってpushしていく事でn個の配列の重ね合わせに対応させる。下とかの例。
+//const ef = [];
+//ef.push(e1);
+
 const e1 = makeElectricField(makeElectricFieldTemplate(),x1,y1);
 const e2 = makeElectricField(makeElectricFieldTemplate(),x2,y2);
 const e3 = makeElectricField(makeElectricFieldTemplate(),x3,y3);
 const E1 = overlapElectricField(e1,e2);
-const e = overlapElectricField(E1,e3);
-render(e);
+const E2 = overlapElectricField(E1,e3);
+
+render(E2);
 
 document.write("(x,y)=(",x1,",",y1,"),(",x2,",",y2,"),(",x3,",",y3,")")
-

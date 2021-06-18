@@ -27,8 +27,7 @@ const makeElectricFieldTemplate = gpu.createKernel(function () {
   // 定数の受け渡し
   constants: { k: electricConstant, w: fhdWidth, h: fhdHeight },
   // 1[C]の電荷による電界値を4FHDの各点で計算
-  output: [2 * fhdWidth + 1, 2 * fhdHeight + 1],
-  returnType: 'Array(2)'
+  output: [2 * fhdWidth + 1, 2 * fhdHeight + 1]
 })
 
 // (x,y)に電界テンプレートの中心を設定して(1920,1080)の配列を作成
@@ -40,9 +39,7 @@ const makeElectricField = gpu.createKernel(function (template, x, y) {
   return [template[h - y + ya][w - x + xa][0], template[h - y + ya][w - x + xa][1]]
 }, {
   constants: { w: fhdWidth, h: fhdHeight },
-  output: [fhdWidth, fhdHeight],
-  argumentTypes: { template: 'Array(2)', x: 'Number', y: 'Number' },
-  returnType: 'Array(2)'
+  output: [fhdWidth, fhdHeight]
 })
 
 // makeElectricFieldで作った(1920,1080)の配列を複数個足す このままだと複数個の配列を入力できないので三重配列にするなり考える必要がある

@@ -14,6 +14,7 @@ describe('Template', () => {
   })
 
   test('値が正しく計算されること', () => {
+    // a.createTemplate()
     expect(a.buffer).toEqual([[], [], [], [], []])
   })
 })

@@ -7,8 +7,16 @@ class Template {
     this.ys = ys
   }
 
-  createTemplate (a) {
-    this.buffer = [[], [], [], [], []]
+  createTemplate () {
+    this.buffer = []
+    for (let i = 0; i < this.ys; i++) {
+      const x = []
+      for (let j = 0; j < this.xs; j++) {
+        x.push(i + j)
+      }
+      this.buffer.push(x)
+    }
+    console.log(this.buffer)
   }
 };
 

@@ -1,11 +1,13 @@
-const request = require('request')
-request('https://cdn.jsdelivr.net/npm/gpu.js@latest/dist/gpu-browser.min.js')
+const { GPU } = require('gpu.js')
 const gpu = new GPU()
 
 class Template {
   constructor (xs, ys) {
     this.xs = xs
     this.ys = ys
+  }
+
+  createTemplate (a) {
     this.buffer = [[], [], [], [], []]
   }
 };

@@ -46,13 +46,13 @@ describe('ElectricField', () => {
     expect(a.buffer_y).toEqual([-1.0, 0.0, 1.0].map(y => new Float32Array([0.0, 1.0, 2.0].map(x => y))))
   })
 
-  test('色の値に変換', () => {
+  test('極座標系に変換できていること', () => {
     a.fillZero()
     a.plusTemplate(template, 2, 1)
+    console.log(a)
     a.createAbsPhase()
-    // rgb255に収めるように配列全体の最大値で割って255を掛けている
-    const DivMaxMul255 = 1 / 2 * 255
-    expect(a.buffer_x).toEqual([-1.0, 0.0, 1.0].map(y => new Float32Array([0.0, 1.0, 2.0].map(x => x * DivMaxMul255))))
-    expect(a.buffer_y).toEqual([-1.0, 0.0, 1.0].map(y => new Float32Array([0.0, 1.0, 2.0].map(x => y * DivMaxMul255))))
+    console.log(a)
+    expect(a.buffer_x).toEqual([new Float32Array([1, Math.sqrt(2), Math.sqrt(5)]), new Float32Array([0, 1, 2]), new Float32Array([1, Math.sqrt(2), Math.sqrt(5)])])
+    expect(a.buffer_y).toEqual([new Float32Array([-Math.PI / 2, -Math.PI / 4, Math.atan(-1 / 2)]), new Float32Array([0, 0, 0]), new Float32Array([Math.PI / 2, Math.PI / 4, Math.atan(1 / 2)])])
   })
 })

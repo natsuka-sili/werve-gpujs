@@ -53,19 +53,28 @@ class ElectricField {
     return this
   }
 
-  convertColor () {
-    const kernel = gpu.createKernel(function (array) {
+  // buffer_xに大きさをbuffer_yに角度を代入する
+  createAbsPhase () {
+    const kernelAbs = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
       const y = this.thread.y
-      return array[y][x] / this.constants.m * 255
+      return Math.sqrt(array1[y][x] * array1[y][x] + array2[y][x] * array2[y][x])
     }, {
-      constants: { m: Math.max(Math.max(...this.buffer_y.map(Function.apply.bind(Math.max, null))), Math.max(...this.buffer_x.map(Function.apply.bind(Math.max, null))))},
       output: [this.ys, this.xs]
     })
-    // 二次元配列から最大値を取ってくる→console.log(Math.max(...this.buffer_x.map(Function.apply.bind(Math.max, null))))
-    // 2つの二次元配列から最大値を取ってくる→console.log(Math.max(Math.max(...this.buffer_y.map(Function.apply.bind(Math.max, null))), Math.max(...this.buffer_x.map(Function.apply.bind(Math.max, null)))))
-    this.buffer_x = kernel(this.buffer_x)
-    this.buffer_y = kernel(this.buffer_y)
+    const kernelPhase = gpu.createKernel(function (array1, array2) {
+      const x = this.thread.x
+      const y = this.thread.y
+      let phase = Math.atan(array2[y][x] / array1[y][x])
+      if (array2[y][x] === 0 && array1[y][x] === 0) { phase = 0 }
+      return phase
+    }, {
+      output: [this.ys, this.xs]
+    })
+    // this.buffer_x = kernelAbs(this.buffer_x, this.buffer_y)
+    const abs = kernelAbs(this.buffer_x, this.buffer_y)
+    this.buffer_y = kernelPhase(this.buffer_x, this.buffer_y)
+    this.buffer_x = abs
     return this
   }
 };

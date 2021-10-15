@@ -1,11 +1,15 @@
-export class ElectricField {
+const canvas = document.getElementById('canvas')
+const gpu = new GPU()
+const gpuCanvas = new GPU({ canvas: canvas })
+
+class ElectricField {
   constructor (xs, ys) {
     this.xs = xs
     this.ys = ys
   }
 
   // 点電荷による電界の作成
-  createTemplate (gpu) {
+  createTemplate () {
     const kernelX = gpu.createKernel(function () {
       const x = (this.thread.x - this.constants.w + 1)
       const y = (this.thread.y - this.constants.h + 1)
@@ -40,7 +44,7 @@ export class ElectricField {
   }
 
   // 配列の足し算を行う
-  plusTemplate (gpu, template, xa, ya) {
+  plusTemplate (template, xa, ya) {
     const kernel = gpu.createKernel(function (array1, array2, xa, ya) {
       const x = this.thread.x
       const y = this.thread.y
@@ -54,7 +58,7 @@ export class ElectricField {
   }
 
   // Xに大きさをYに角度を代入する
-  convertAbsPhase (gpu) {
+  convertAbsPhase () {
     const kernelAbs = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
       const y = this.thread.y
@@ -78,13 +82,11 @@ export class ElectricField {
   }
 
   // 結果を表示する
-  displayOutput (gpuCanvas) {
+  displayOutput () {
     const kernel = gpuCanvas.createKernel(function (array) {
       const x = this.thread.x
       const y = this.thread.y
-      // const color = array[y][x]
-      // 割り算は値を色域に収めるために行った適当な演算
-      const color = array[y][x] / 1000000
+      const color = array[y][x]
       this.color(color, color, color, 1)
     }, {
       output: [this.ys, this.xs],
@@ -93,4 +95,9 @@ export class ElectricField {
     kernel(this.buffer_x)
   }
 };
-// module.exports = ElectricField
+module.exports = ElectricField
+
+const a = new ElectricField(1000, 1000)
+a.fillZero()
+a.createTemplate()
+a.displayOutput()

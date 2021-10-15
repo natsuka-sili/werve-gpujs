@@ -1,5 +1,6 @@
+
 // canvasの定義
-const canvas = document.getElementById('verve')
+const canvas = document.getElementById('canvas')
 // gpuJSの定義
 // canvasエレメントなし
 const gpu = new GPU()
@@ -79,8 +80,8 @@ const render = gpuCanvas.createKernel(function (board) {
 })
 
 const eTemplate = makeElectricFieldTemplate()
-const e1 = makeElectricField(eTemplate, 500, 800)
-const e2 = makeElectricField(eTemplate, 1600, 300)
+const e1 = makeElectricField(eTemplate, 400, 400)
+const e2 = makeElectricField(eTemplate, 1500, 700)
 const E = overlapElectricField(e1, e2)
 
 render(E)

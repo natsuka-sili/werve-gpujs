@@ -83,7 +83,7 @@ export class ElectricField {
       const x = this.thread.x
       const y = this.thread.y
       // const color = array[y][x]
-      // 割り算は値を色域に収めるために行った適当な演算
+      // 1000000での割り算は値を色域に収めるために行った適当な演算
       const color = array[y][x] / 1000000
       this.color(color, color, color, 1)
     }, {

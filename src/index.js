@@ -7,7 +7,7 @@ const canvas = document.getElementById('verve')
 const gpu = new GPU()
 const gpuCanvas = new GPU({ canvas: canvas })
 
-const a = new ElectricField(300, 300)
+const a = new ElectricField(1080, 1000)
 a.createTemplate(gpu)
 a.convertAbsPhase(gpu)
 a.displayOutput(gpuCanvas)

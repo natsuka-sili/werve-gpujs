@@ -5,25 +5,25 @@ export class ElectricField {
   }
 
   // 点電荷による電界の作成
-  createTemplate (gpu) {
+  createTemplate (gpu, xa, ya) {
     const kernelX = gpu.createKernel(function () {
-      const x = (this.thread.x - this.constants.w + 1)
-      const y = (this.thread.y - this.constants.h + 1)
+      const x = (this.thread.x - this.constants.xf - this.constants.w + 1)
+      const y = (this.thread.y - this.constants.yf - this.constants.h + 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
       return k * x
     }, {
-      constants: { k: 9E+9, w: this.xs, h: this.ys },
+      constants: { k: 9E+9, w: this.xs / 2, h: this.ys / 2, xf: xa, yf: ya },
       output: [2 * this.xs - 1, 2 * this.ys - 1]
     })
     const kernelY = gpu.createKernel(function () {
-      const x = (this.thread.x - this.constants.w + 1)
-      const y = (this.thread.y - this.constants.h + 1)
+      const x = (this.thread.x - this.constants.xf - this.constants.w + 1)
+      const y = (this.thread.y - this.constants.yf - this.constants.h + 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
       return k * y
     }, {
-      constants: { k: 9E+9, w: this.xs, h: this.ys },
+      constants: { k: 9E+9, w: this.xs / 2, h: this.ys / 2, xf: xa, yf: ya },
       output: [2 * this.xs - 1, 2 * this.ys - 1]
     })
     this.buffer_x = kernelX()
@@ -40,6 +40,7 @@ export class ElectricField {
   }
 
   // 配列の足し算を行う
+  // 多分この書き方ではなくてconstantsでxaとかyaを渡す方が良い
   plusTemplate (gpu, template, xa, ya) {
     const kernel = gpu.createKernel(function (array1, array2, xa, ya) {
       const x = this.thread.x
@@ -82,9 +83,8 @@ export class ElectricField {
     const kernel = gpuCanvas.createKernel(function (array) {
       const x = this.thread.x
       const y = this.thread.y
-      // const color = array[y][x]
-      // 1000000での割り算は値を色域に収めるために行った適当な演算
-      const color = array[y][x] / 1000000
+      // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
+      const color = array[y][x] / 8987551
       this.color(color, color, color, 1)
     }, {
       output: [this.ys, this.xs],
@@ -93,4 +93,3 @@ export class ElectricField {
     kernel(this.buffer_x)
   }
 };
-// module.exports = ElectricField

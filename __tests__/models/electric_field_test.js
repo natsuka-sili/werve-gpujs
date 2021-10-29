@@ -1,9 +1,8 @@
 // __test__/models/template_test.js
 /* eslint-disable no-alert, no-console, no-undef */
 
-const { GPU } = require('gpu.js')
-
-const ElectricField = require('sotuken_js/src/models/electric_field.js')
+import { GPU } from 'gpu.js'
+import { ElectricField } from '../../src/models/electric_field.js'
 
 describe('ElectricField', () => {
   let a
@@ -25,7 +24,7 @@ describe('ElectricField', () => {
     const ansY = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => k * y / Math.sqrt((x * x + y * y) * (x * x + y * y) * (x * x + y * y))))
     ansX[2][2] = 0.0
     ansY[2][2] = 0.0
-    a.createTemplate(gpu)
+    a.createTemplate(gpu, 2.5, 2.5)
     for (let i = 0; i < 5; i++) {
       for (let j = 0; j < 5; j++) {
         expect(a.buffer_x[i][j] / 100000).toBeCloseTo(ansX[i][j] / 100000, 1)

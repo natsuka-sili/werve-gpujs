@@ -8,7 +8,7 @@ const gpuCanvas = new GPU({ canvas: canvas })
 
 // 普通に一枚表示する
 const a = new ElectricField(400, 400)
-a.createTemplate(gpu, 0, 0)
+a.createTemplate(gpu, 200, 200)
 a.convertAbsPhase(gpu)
 a.displayOutput(gpuCanvas)
 

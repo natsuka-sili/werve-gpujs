@@ -2,18 +2,25 @@ export class ElectricField {
   constructor (xs, ys) {
     this.xs = xs
     this.ys = ys
+    this.charge = []
+  }
+
+  // 点電荷の配置
+  setElectricCharge (x, y, q) {
+    this.charge.push([x, y, q])
+    return this
   }
 
   // 点電荷による電界の作成
-  createTemplate (gpu, xa, ya) {
+  createTemplate (gpu, xa, ya, q) {
     const kernelX = gpu.createKernel(function () {
       const x = (this.thread.x - this.constants.xf - this.constants.w + 1)
       const y = (this.thread.y - this.constants.yf - this.constants.h + 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
-      return k * x
+      return k * x * this.constants.q
     }, {
-      constants: { k: 9E+9, w: this.xs / 2, h: this.ys / 2, xf: xa, yf: ya },
+      constants: { k: 9E+9, w: this.xs / 2, h: this.ys / 2, xf: xa, yf: ya, q: q },
       output: [2 * this.xs - 1, 2 * this.ys - 1]
     })
     const kernelY = gpu.createKernel(function () {
@@ -21,9 +28,9 @@ export class ElectricField {
       const y = (this.thread.y - this.constants.yf - this.constants.h + 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
-      return k * y
+      return k * y * this.constants.q
     }, {
-      constants: { k: 9E+9, w: this.xs / 2, h: this.ys / 2, xf: xa, yf: ya },
+      constants: { k: 9E+9, w: this.xs / 2, h: this.ys / 2, xf: xa, yf: ya, q: q },
       output: [2 * this.xs - 1, 2 * this.ys - 1]
     })
     this.buffer_x = kernelX()
@@ -42,15 +49,16 @@ export class ElectricField {
   // 配列の足し算を行う
   // 多分この書き方ではなくてconstantsでxaとかyaを渡す方が良い
   plusTemplate (gpu, template, xa, ya) {
-    const kernel = gpu.createKernel(function (array1, array2, xa, ya) {
+    const kernel = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
       const y = this.thread.y
-      return array1[y][x] + array2[y + ya][x + xa]
+      return array1[y][x] + array2[y - this.constants.yf][x - this.constants.xf]
     }, {
+      constants: { xf: xa, yf: ya },
       output: [this.ys, this.xs]
     })
-    this.buffer_x = kernel(this.buffer_x, template.buffer_x, xa, ya)
-    this.buffer_y = kernel(this.buffer_y, template.buffer_y, xa, ya)
+    this.buffer_x = kernel(this.buffer_x, template.buffer_x)
+    this.buffer_y = kernel(this.buffer_y, template.buffer_y)
     return this
   }
 

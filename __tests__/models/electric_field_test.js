@@ -18,13 +18,6 @@ describe('ElectricField', () => {
     expect(a).not.toBe(null)
   })
 
-  test('電荷の設置ができること', () => {
-    a.setElectricCharge(1, 4, 7)
-    expect(a.charge[0]).toEqual([1, 4, 7])
-    a.setElectricCharge(7, -3, 0.5)
-    expect(a.charge[1]).toEqual([7, -3, 0.5])
-  })
-
   test('値が正しく計算されること', () => {
     const k = 9E+9
     const ansX = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => k * x / Math.sqrt((x * x + y * y) * (x * x + y * y) * (x * x + y * y))))
@@ -61,16 +54,77 @@ describe('ElectricField', () => {
     const template = new ElectricField(3, 3)
     template.buffer_x = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => x))
     template.buffer_y = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => y))
+    console.log(a.buffer_x)
     a.plusTemplate(gpu, template, -2, -1)
     a.convertAbsPhase(gpu)
     expect(a.buffer_x).toEqual([new Float32Array([1, Math.sqrt(2), Math.sqrt(5)]), new Float32Array([0, 1, 2]), new Float32Array([1, Math.sqrt(2), Math.sqrt(5)])])
     expect(a.buffer_y).toEqual([new Float32Array([-Math.PI / 2, -Math.PI / 4, Math.atan(-1 / 2)]), new Float32Array([0, 0, 0]), new Float32Array([Math.PI / 2, Math.PI / 4, Math.atan(1 / 2)])])
+    console.log(a.buffer_x)
   })
 
   test('表示されていること', () => {
     a.fillZero()
     a.createTemplate(gpu, 0, 0, 1)
-    // console.log(a)
     a.displayOutput(gpuCanvas)
+  })
+
+  // ############################################################# //
+
+  test('電荷の設置ができること', () => {
+    a.setElectricCharge(1, 4, 7)
+    expect(a.charge[0]).toEqual([1, 4, 7])
+    a.setElectricCharge(7, -3, 0.5)
+    expect(a.charge[1]).toEqual([7, -3, 0.5])
+  })
+
+  test('電界を配列に入れられていること', () => {
+    const k = 9E+9
+    const ansX1 = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => k * x / Math.sqrt((x * x + y * y) * (x * x + y * y) * (x * x + y * y))))
+    const ansY1 = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => k * y / Math.sqrt((x * x + y * y) * (x * x + y * y) * (x * x + y * y))))
+    ansX1[2][2] = 0.0
+    ansY1[2][2] = 0.0
+
+    const ansX2 = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => 4 * k * x / Math.sqrt((x * x + y * y) * (x * x + y * y) * (x * x + y * y))))
+    const ansY2 = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => 4 * k * y / Math.sqrt((x * x + y * y) * (x * x + y * y) * (x * x + y * y))))
+    ansX2[2][2] = 0.0
+    ansY2[2][2] = 0.0
+
+    a.setElectricCharge(2.5, 2.5, 1)
+    a.setElectricCharge(2.5, 2.5, 4)
+
+    a.calcElectricField(gpu)
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 5; j++) {
+        expect(a.electric_field_x[0][i][j] / 100000).toBeCloseTo(ansX1[i][j] / 100000, 1)
+        expect(a.electric_field_y[0][i][j] / 100000).toBeCloseTo(ansY1[i][j] / 100000, 1)
+        expect(a.electric_field_x[1][i][j] / 100000).toBeCloseTo(ansX2[i][j] / 100000, 1)
+        expect(a.electric_field_y[1][i][j] / 100000).toBeCloseTo(ansY2[i][j] / 100000, 1)
+      }
+    }
+  })
+
+  test('重ね合わせができていること', () => {
+    a.setElectricCharge(0, 0, 1)
+    a.setElectricCharge(0, 0, 1)
+
+    a.electric_field_x.push([-1.0, 0.0, 1.0].map(y => new Float32Array([0.0, 1.0, 2.0].map(x => x))))
+    a.electric_field_y.push([-1.0, 0.0, 1.0].map(y => new Float32Array([0.0, 1.0, 2.0].map(x => y))))
+    a.electric_field_x.push([-1.0, 0.0, 1.0].map(y => new Float32Array([0.0, 1.0, 2.0].map(x => x))))
+    a.electric_field_y.push([-1.0, 0.0, 1.0].map(y => new Float32Array([0.0, 1.0, 2.0].map(x => y))))
+
+    a.superposeElectricField(gpu)
+    expect(a.all_electric_field_x).toEqual([-2.0, 0.0, 2.0].map(y => new Float32Array([0.0, 2.0, 4.0].map(x => x))))
+    expect(a.all_electric_field_y).toEqual([-2.0, 0.0, 2.0].map(y => new Float32Array([0.0, 2.0, 4.0].map(x => y))))
+  })
+
+  test('極座標変換でがきていること', () => {
+    a.all_electric_field_x = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => x))
+    a.all_electric_field_y = [-2.0, -1.0, 0.0, 1.0, 2.0].map(y => [-2.0, -1.0, 0.0, 1.0, 2.0].map(x => y))
+    a.convertPolar(gpu)
+    console.log(a.all_electric_field_x)
+    console.log(a.all_electric_field_y)
+    console.log(a.all_electric_field_r)
+    expect(a.all_electric_field_r).toEqual([new Float32Array([1, Math.sqrt(2), Math.sqrt(5)]), new Float32Array([0, 1, 2]), new Float32Array([1, Math.sqrt(2), Math.sqrt(5)])])
+    expect(a.all_electric_field_theta).toEqual([new Float32Array([-Math.PI / 2, -Math.PI / 4, Math.atan(-1 / 2)]), new Float32Array([0, 0, 0]), new Float32Array([Math.PI / 2, Math.PI / 4, Math.atan(1 / 2)])])
   })
 })

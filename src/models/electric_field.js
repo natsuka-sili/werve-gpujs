@@ -3,6 +3,8 @@ export class ElectricField {
     this.width = width
     this.height = height
     this.charge = []
+    this.sum_force_x = []
+    this.sum_force_y = []
   }
 
   setElectricCharge (x, y, q) {
@@ -10,10 +12,10 @@ export class ElectricField {
     return this
   }
 
-  calcElectricField (gpu) {
+  calcElectricFieldTemplate (gpu) {
     const kernelX = gpu.createKernel(function () {
-      const x = (this.thread.x - this.constants.w + 1)
-      const y = (this.thread.y - this.constants.h + 1)
+      const x = (this.constants.w - this.thread.x - 1)
+      const y = (this.constants.h - this.thread.y - 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
       return k * x
@@ -22,8 +24,8 @@ export class ElectricField {
       output: [2 * this.width - 1, 2 * this.height - 1]
     })
     const kernelY = gpu.createKernel(function () {
-      const x = (this.thread.x - this.constants.w + 1)
-      const y = (this.thread.y - this.constants.h + 1)
+      const x = (this.constants.w - this.thread.x - 1)
+      const y = (this.constants.h - this.thread.y - 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
       return k * y
@@ -79,6 +81,26 @@ export class ElectricField {
     this.electric_field_r = kernelR(this.electric_field_x, this.electric_field_y)
     this.electric_field_theta = kernelTheta(this.electric_field_x, this.electric_field_y)
     return this
+  }
+
+  calcCoulombForce () {
+    const k = 9E+9
+    for (let i = 0; i < this.charge.length - 1; i++) {
+      for (let j = i + 1; j < this.charge.length; j++) {
+        const x1 = this.width / 2 - this.charge[i][0]
+        const y1 = this.height / 2 - this.charge[i][1]
+        const q1 = this.charge[i][2]
+        const x2 = this.width / 2 - this.charge[j][0]
+        const y2 = this.height / 2 - this.charge[j][1]
+        const q2 = this.charge[j][2]
+        const ri = 1 / ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+        const f = k * Math.sqrt(ri * ri * ri) * q1 * q2
+        const fx = f * (x1 - x2)
+        const fy = f * (y1 - y2)
+        this.sum_force_x.push(fx)
+        this.sum_force_y.push(fy)
+      }
+    }
   }
 
   renderR (gpuCanvas) {

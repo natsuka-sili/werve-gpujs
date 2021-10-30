@@ -1,54 +1,45 @@
 import { GPU } from 'gpu.js'
 import { ElectricField } from './models/electric_field.js'
 
-const canvas = document.getElementById('verve')
+const canvas = document.getElementById('canvas')
 
 const gpu = new GPU()
 const gpuCanvas = new GPU({ canvas: canvas })
 
-// ######################################################### //
+const e = new ElectricField(400, 400)
+e.calcElectricField(gpu)
+e.setElectricCharge(0, 0, 1)
+e.setElectricCharge(-100, 100, 2)
+e.setElectricCharge(200, -50, 1)
+e.superposeElectricField(gpu)
+e.convertPolar(gpu)
+e.renderR(gpuCanvas)
+console.log(e)
+
+/*
+#####################
+#####################
+#####################
+#####################
+#####################
+#####################
+#####################
+#####################
+*/
+
+const canvas2 = document.getElementById('canvas2')
+const gpuCanvas2 = new GPU({ canvas: canvas2 })
 
 const a = new ElectricField(400, 400)
 a.createTemplate(gpu, 0, 0, 1)
-
-console.log('A = ', a.buffer_x)
-
 const b = new ElectricField(400, 400)
-b.createTemplate(gpu, 200, 100, 3)
-
-console.log('B = ', b.buffer_y)
-
+b.createTemplate(gpu, 0, 0, 2)
 const c = new ElectricField(400, 400)
-c.createTemplate(gpu, -80, -150, 5)
-
-a.plusTemplate(gpu, b, 0, 0)
-a.plusTemplate(gpu, c, 0, 0)
-
-console.log('C = ', a.buffer_x)
-
+c.createTemplate(gpu, 100, 50, 1)
+a.plusTemplate(gpu, b, -100, 100)
+a.plusTemplate(gpu, c, 100, -100)
 a.convertAbsPhase(gpu)
-a.displayOutput(gpuCanvas)
-
-console.log('D = ', a.buffer_x)
-
-// ######################################################### //
-
-const e = new ElectricField(400, 400)
-e.setElectricCharge(0, 0, 1)
-e.setElectricCharge(200, 100, 3)
-e.setElectricCharge(-80, -150, 5)
-e.calcElectricField(gpu)
-
-console.log('A = ', e.electric_field_x[0])
-console.log('B = ', e.electric_field_y[1])
-
-e.superposeElectricField(gpu)
-
-console.log('C = ', e.all_electric_field_x)
-
-e.convertPolar(gpu)
-
-console.log('D = ', e.all_electric_field_r)
+a.displayOutput(gpuCanvas2)
 
 // setInterval
 // let i = 0

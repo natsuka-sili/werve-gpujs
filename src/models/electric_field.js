@@ -44,12 +44,13 @@ export class ElectricField {
     for (let i = 0; i < this.charge.length; i++) {
       const x = this.charge[i][0]
       const y = this.charge[i][1]
+      const q = this.charge[i][2]
       const kernel = gpu.createKernel(function (array1, array2) {
         const x = this.thread.x
         const y = this.thread.y
-        return array1[y][x] + array2[y - this.constants.y][x - this.constants.x]
+        return array1[y][x] + array2[y - this.constants.y][x - this.constants.x] * this.constants.q
       }, {
-        constants: { x: x, y: y },
+        constants: { x: x, y: y, q: q },
         output: [this.height, this.width]
       })
       this.electric_field_x = kernel(this.electric_field_x, this.template_electric_field_x)

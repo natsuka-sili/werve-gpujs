@@ -3,8 +3,16 @@ export class ElectricField {
     this.width = width
     this.height = height
     this.charge = []
-    this.sum_force_x = []
-    this.sum_force_y = []
+    this.template_electric_field_x = []
+    this.template_electric_field_y = []
+    this.electric_field_x = []
+    this.electric_field_y = []
+    this.electric_field_r = []
+    this.electric_field_theta = []
+    this.force_x = []
+    this.force_y = []
+    this.force_r = []
+    this.force_theta = []
   }
 
   setElectricCharge (x, y, q) {
@@ -61,7 +69,7 @@ export class ElectricField {
     return this
   }
 
-  convertPolar (gpu) {
+  convertPolarElectricField (gpu) {
     const kernelR = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
       const y = this.thread.y
@@ -85,6 +93,8 @@ export class ElectricField {
 
   calcCoulombForce () {
     const k = 9E+9
+    const tentativeForceX = []
+    const tentativeForceY = []
     for (let i = 0; i < this.charge.length - 1; i++) {
       for (let j = i + 1; j < this.charge.length; j++) {
         const x1 = this.width / 2 - this.charge[i][0]
@@ -97,10 +107,42 @@ export class ElectricField {
         const f = k * Math.sqrt(ri * ri * ri) * q1 * q2
         const fx = f * (x1 - x2)
         const fy = f * (y1 - y2)
-        this.sum_force_x.push(fx)
-        this.sum_force_y.push(fy)
+        tentativeForceX.push([i, j, fx])
+        tentativeForceX.push([j, i, -fx])
+        tentativeForceY.push([i, j, fy])
+        tentativeForceY.push([j, i, -fy])
       }
     }
+    for (let i = 0; i < this.charge.length; i++) {
+      const temporaryX = []
+      const temporaryY = []
+      for (let j = 0; j < this.charge.length; j++) {
+        if (i !== j) {
+          const index = tentativeForceX.map((elm, idx) => elm[0] === i && elm[1] === j ? idx : '').find(String)
+          temporaryX.push(tentativeForceX[index][2])
+          temporaryY.push(tentativeForceY[index][2])
+        }
+      }
+      this.force_x.push(temporaryX)
+      this.force_y.push(temporaryY)
+    }
+    return this
+  }
+
+  convertPolarCoulombForce (gpu) {
+    for (let i = 0; i < this.charge.length; i++) {
+      const temporaryR = []
+      const temporaryTheta = []
+      for (let j = 0; j < this.charge.length - 1; j++) {
+        temporaryR.push(Math.sqrt(this.force_x[i][j] * this.force_x[i][j] + this.force_y[i][j] * this.force_y[i][j]))
+        let theta = Math.atan(this.force_y[i][j] / this.force_x[i][j])
+        if (this.force_x[i][j] === 0 && this.force_y[i][j] === 0) { theta = 0 }
+        temporaryTheta.push(theta)
+      }
+      this.force_r.push(temporaryR)
+      this.force_theta.push(temporaryTheta)
+    }
+    return this
   }
 
   renderR (gpuCanvas) {
@@ -128,6 +170,7 @@ export class ElectricField {
   #####################
   */
 
+  /*
   // 点電荷による電界の作成
   createTemplate (gpu, xa, ya, q) {
     const kernelX = gpu.createKernel(function () {
@@ -217,4 +260,5 @@ export class ElectricField {
     })
     kernel(this.buffer_x)
   }
+*/
 };

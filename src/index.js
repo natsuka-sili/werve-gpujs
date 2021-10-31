@@ -6,15 +6,20 @@ const canvas = document.getElementById('canvas')
 const gpu = new GPU()
 const gpuCanvas = new GPU({ canvas: canvas })
 
-const e = new ElectricField(400, 400)
+const width = 400
+const height = 400
+
+const e = new ElectricField(width, height)
 e.calcElectricFieldTemplate(gpu)
 e.setElectricCharge(0, 0, 1)
 e.setElectricCharge(-100, 100, 2)
 e.setElectricCharge(200, -50, 3)
+e.setElectricCharge(-200, -200, 4)
 e.superposeElectricField(gpu)
-e.convertPolar(gpu)
+e.convertPolarElectricField(gpu)
 e.renderR(gpuCanvas)
 e.calcCoulombForce(gpu)
+e.convertPolarCoulombForce(gpu)
 console.log(e)
 
 /*
@@ -28,6 +33,7 @@ console.log(e)
 #####################
 */
 
+/*
 const canvas2 = document.getElementById('canvas2')
 const gpuCanvas2 = new GPU({ canvas: canvas2 })
 
@@ -41,6 +47,7 @@ a.plusTemplate(gpu, b, -100, 100)
 a.plusTemplate(gpu, c, 100, -100)
 a.convertAbsPhase(gpu)
 a.displayOutput(gpuCanvas2)
+*/
 
 // setInterval
 // let i = 0

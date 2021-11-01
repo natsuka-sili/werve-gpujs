@@ -13,6 +13,10 @@ export class ElectricField {
     this.force_y = []
     this.force_r = []
     this.force_theta = []
+    this.sum_force_x = []
+    this.sum_force_y = []
+    this.sum_force_r = []
+    this.sum_force_theta = []
   }
 
   setElectricCharge (x, y, q) {
@@ -80,9 +84,9 @@ export class ElectricField {
     const kernelTheta = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
       const y = this.thread.y
-      let r = Math.atan(array2[y][x] / array1[y][x])
-      if (array2[y][x] === 0 && array1[y][x] === 0) { r = 0 }
-      return r
+      let theta = Math.atan(array2[y][x] / array1[y][x])
+      if (array2[y][x] === 0 && array1[y][x] === 0) { theta = 0 }
+      return theta
     }, {
       output: [this.height, this.width]
     })
@@ -129,7 +133,7 @@ export class ElectricField {
     return this
   }
 
-  convertPolarCoulombForce (gpu) {
+  convertPolarCoulombForce () {
     for (let i = 0; i < this.charge.length; i++) {
       const temporaryR = []
       const temporaryTheta = []
@@ -143,6 +147,18 @@ export class ElectricField {
       this.force_theta.push(temporaryTheta)
     }
     return this
+  }
+
+  sumCoulombForce () {
+    const reducer = (previousValue, currentValue) => previousValue + currentValue
+    for (let i = 0; i < this.charge.length; i++) {
+      this.sum_force_x.push(this.force_x[i].reduce(reducer))
+      this.sum_force_y.push(this.force_y[i].reduce(reducer))
+      this.sum_force_r.push(Math.sqrt(this.sum_force_x[i] * this.sum_force_x[i] + this.sum_force_y[i] * this.sum_force_y[i]))
+      let theta = Math.atan(this.sum_force_y[i] / this.sum_force_x[i])
+      if (this.sum_force_x[i] === 0 && this.sum_force_y[i] === 0) { theta = 0 }
+      this.sum_force_theta.push(theta)
+    }
   }
 
   renderR (gpuCanvas) {

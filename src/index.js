@@ -18,8 +18,9 @@ e.setElectricCharge(-200, -200, 4)
 e.superposeElectricField(gpu)
 e.convertPolarElectricField(gpu)
 e.renderR(gpuCanvas)
-e.calcCoulombForce(gpu)
-e.convertPolarCoulombForce(gpu)
+e.calcCoulombForce()
+e.convertPolarCoulombForce()
+e.sumCoulombForce()
 console.log(e)
 
 /*

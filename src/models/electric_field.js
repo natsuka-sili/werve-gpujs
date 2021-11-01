@@ -20,7 +20,7 @@ export class ElectricField {
   }
 
   setElectricCharge (x, y, q) {
-    this.charge.push([x, y, q])
+    this.charge.push([x, y, 0, 0, q])
     return this
   }
 
@@ -58,7 +58,7 @@ export class ElectricField {
     for (let i = 0; i < this.charge.length; i++) {
       const x = this.charge[i][0]
       const y = this.charge[i][1]
-      const q = this.charge[i][2]
+      const q = this.charge[i][4]
       const kernel = gpu.createKernel(function (array1, array2) {
         const x = this.thread.x
         const y = this.thread.y
@@ -103,10 +103,10 @@ export class ElectricField {
       for (let j = i + 1; j < this.charge.length; j++) {
         const x1 = this.width / 2 - this.charge[i][0]
         const y1 = this.height / 2 - this.charge[i][1]
-        const q1 = this.charge[i][2]
+        const q1 = this.charge[i][4]
         const x2 = this.width / 2 - this.charge[j][0]
         const y2 = this.height / 2 - this.charge[j][1]
-        const q2 = this.charge[j][2]
+        const q2 = this.charge[j][4]
         const ri = 1 / ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
         const f = k * Math.sqrt(ri * ri * ri) * q1 * q2
         const fx = f * (x1 - x2)
@@ -158,6 +158,31 @@ export class ElectricField {
       let theta = Math.atan(this.sum_force_y[i] / this.sum_force_x[i])
       if (this.sum_force_x[i] === 0 && this.sum_force_y[i] === 0) { theta = 0 }
       this.sum_force_theta.push(theta)
+    }
+  }
+
+  calcPositions () {
+    for (let i = 0; i < this.charge.length; i++) {
+      if (this.charge[i][0] >= this.width / 2) {
+        this.charge[i][2] = -0.9 * (this.charge[i][2] - this.sum_force_x[i] / 1000)
+        this.charge[i][0] = this.width / 2
+      } else if (this.charge[i][0] <= -this.width / 2) {
+        this.charge[i][2] = -0.9 * (this.charge[i][2] - this.sum_force_x[i] / 1000)
+        this.charge[i][0] = -this.width / 2
+      } else {
+        this.charge[i][2] = this.charge[i][2] - this.sum_force_x[i] / 1000
+        this.charge[i][0] = this.charge[i][0] + this.charge[i][2] / 1000 + this.sum_force_x[i] / 600000
+      }
+      if (this.charge[i][1] >= this.height / 2) {
+        this.charge[i][3] = -0.9 * (this.charge[i][3] - this.sum_force_y[i] / 1000)
+        this.charge[i][1] = this.height / 2
+      } else if (this.charge[i][1] <= -this.height / 2) {
+        this.charge[i][3] = -0.9 * (this.charge[i][3] - this.sum_force_y[i] / 1000)
+        this.charge[i][1] = -this.height / 2
+      } else {
+        this.charge[i][3] = this.charge[i][3] - this.sum_force_y[i] / 1000
+        this.charge[i][1] = this.charge[i][1] + this.charge[i][3] / 1000 + this.sum_force_y[i] / 600000
+      }
     }
   }
 

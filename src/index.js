@@ -6,22 +6,24 @@ const canvas = document.getElementById('canvas')
 const gpu = new GPU()
 const gpuCanvas = new GPU({ canvas: canvas })
 
-const width = 400
-const height = 400
+const width = 200
+const height = 200
 
-const e = new ElectricField(width, height)
-e.calcElectricFieldTemplate(gpu)
-e.setElectricCharge(0, 0, 1)
-e.setElectricCharge(-100, 100, 2)
-e.setElectricCharge(200, -50, 3)
-e.setElectricCharge(-200, -200, 4)
-e.superposeElectricField(gpu)
-e.convertPolarElectricField(gpu)
-e.renderR(gpuCanvas)
-e.calcCoulombForce()
-e.convertPolarCoulombForce()
-e.sumCoulombForce()
-console.log(e)
+const a = new ElectricField(width, height)
+a.calcElectricFieldTemplate(gpu)
+a.setElectricCharge(-width / 4, height / 3, 1)
+a.setElectricCharge(width / 4, -height / 3, 1)
+const move = () => {
+  a.superposeElectricField(gpu)
+  a.convertPolarElectricField(gpu)
+  a.renderR(gpuCanvas)
+  console.log(a.charge[0][0], a.charge[0][2], a.charge[1][0], a.charge[1][2], ' ', a.charge[0][1], a.charge[0][3], a.charge[1][1], a.charge[1][3])
+  a.calcCoulombForce()
+  a.sumCoulombForce()
+  a.calcPositions()
+  requestAnimationFrame(move)
+}
+setTimeout(function () { move() }, 5000)
 
 /*
 #####################
@@ -32,6 +34,21 @@ console.log(e)
 #####################
 #####################
 #####################
+*/
+
+/*
+const e = new ElectricField(width, height)
+e.calcElectricFieldTemplate(gpu)
+e.setElectricCharge(0, 0, 1)
+e.setElectricCharge(-width / 4, width / 4, 2)
+e.setElectricCharge(width / 2, -width / 8, 3)
+e.setElectricCharge(-width / 2, -width / 2, 4)
+e.superposeElectricField(gpu)
+e.convertPolarElectricField(gpu)
+e.renderR(gpuCanvas)
+e.calcCoulombForce()
+e.convertPolarCoulombForce()
+e.sumCoulombForce()
 */
 
 /*

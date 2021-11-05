@@ -25,47 +25,57 @@ export class ElectricField {
   }
 
   calcElectricFieldTemplate (gpu) {
+    const w = this.width
+    const h = this.height
+    const wp2 = w / 2
+    const hp2 = h / 2
     const kernelX = gpu.createKernel(function () {
-      const x = (this.constants.w - this.thread.x - 1)
-      const y = (this.constants.h - this.thread.y - 1)
+      const x = (this.thread.x - this.constants.w - 1)
+      const y = (this.thread.y - this.constants.h - 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
-      return k * x
+      return k * Math.abs(x)
     }, {
-      constants: { k: 9E+9, w: this.width / 2, h: this.height / 2 },
-      output: [2 * this.width - 1, 2 * this.height - 1]
+      constants: { k: 9E+9, w: wp2, h: hp2 },
+      output: [2 * w - 1, 2 * h - 1]
     })
     const kernelY = gpu.createKernel(function () {
-      const x = (this.constants.w - this.thread.x - 1)
-      const y = (this.constants.h - this.thread.y - 1)
+      const x = (this.thread.x - this.constants.w - 1)
+      const y = (this.thread.y - this.constants.h - 1)
       const ri = 1 / (x * x + y * y)
       const k = this.constants.k * Math.sqrt(ri * ri * ri)
-      return k * y
+      return k * Math.abs(y)
     }, {
-      constants: { k: 9E+9, w: this.width / 2, h: this.height / 2 },
-      output: [2 * this.width - 1, 2 * this.height - 1]
+      constants: { k: 9E+9, w: wp2, h: hp2 },
+      output: [2 * w - 1, 2 * h - 1]
     })
     this.template_electric_field_x = kernelX()
     this.template_electric_field_y = kernelY()
-    this.template_electric_field_x[this.height - 1][this.width - 1] = 0.0
-    this.template_electric_field_y[this.height - 1][this.width - 1] = 0.0
+    this.template_electric_field_x[h - 1][w - 1] = 0.0
+    this.template_electric_field_y[h - 1][w - 1] = 0.0
     return this
   }
 
   superposeElectricField (gpu) {
-    this.electric_field_x = new Array(this.height).fill(new Array(this.width).fill(0.0))
-    this.electric_field_y = new Array(this.height).fill(new Array(this.width).fill(0.0))
+    const w = this.width
+    const h = this.height
+    this.electric_field_x = new Array(h).fill(new Array(w).fill(0.0))
+    this.electric_field_y = new Array(h).fill(new Array(w).fill(0.0))
+    const charge = this.charge
     for (let i = 0; i < this.charge.length; i++) {
-      const x = this.charge[i][0]
-      const y = this.charge[i][1]
-      const q = this.charge[i][4]
+      const chargeI = charge[i]
+      const x = chargeI[0]
+      const y = chargeI[1]
+      const q = chargeI[4]
+      const cx = w - 1 - chargeI[0]
+      const cy = h - 1 - chargeI[1]
       const kernel = gpu.createKernel(function (array1, array2) {
         const x = this.thread.x
         const y = this.thread.y
-        return array1[y][x] + array2[y - this.constants.y][x - this.constants.x] * this.constants.q
+        return array1[y][x] + array2[y + this.constants.y][x + this.constants.x] * this.constants.q
       }, {
-        constants: { x: x, y: y, q: q },
-        output: [this.height, this.width]
+        constants: { x: x, y: y, q: q, cx: cx, cy: cy },
+        output: [h, w]
       })
       this.electric_field_x = kernel(this.electric_field_x, this.template_electric_field_x)
       this.electric_field_y = kernel(this.electric_field_y, this.template_electric_field_y)
@@ -74,12 +84,14 @@ export class ElectricField {
   }
 
   convertPolarElectricField (gpu) {
+    const w = this.width
+    const h = this.height
     const kernelR = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
       const y = this.thread.y
       return Math.sqrt(array1[y][x] * array1[y][x] + array2[y][x] * array2[y][x])
     }, {
-      output: [this.height, this.width]
+      output: [h, w]
     })
     const kernelTheta = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
@@ -88,25 +100,33 @@ export class ElectricField {
       if (array2[y][x] === 0 && array1[y][x] === 0) { theta = 0 }
       return theta
     }, {
-      output: [this.height, this.width]
+      output: [h, w]
     })
-    this.electric_field_r = kernelR(this.electric_field_x, this.electric_field_y)
-    this.electric_field_theta = kernelTheta(this.electric_field_x, this.electric_field_y)
+    const electricFieldX = this.electric_field_x
+    const electricFieldY = this.electric_field_y
+    this.electric_field_r = kernelR(electricFieldX, electricFieldY)
+    this.electric_field_theta = kernelTheta(electricFieldX, electricFieldY)
     return this
   }
 
   calcCoulombForce () {
+    const w = this.width
+    const h = this.height
+    const chargeL = this.charge.length
+    const charge = this.charge
     const k = 9E+9
     const tentativeForceX = []
     const tentativeForceY = []
-    for (let i = 0; i < this.charge.length - 1; i++) {
-      for (let j = i + 1; j < this.charge.length; j++) {
-        const x1 = this.width / 2 - this.charge[i][0]
-        const y1 = this.height / 2 - this.charge[i][1]
-        const q1 = this.charge[i][4]
-        const x2 = this.width / 2 - this.charge[j][0]
-        const y2 = this.height / 2 - this.charge[j][1]
-        const q2 = this.charge[j][4]
+    for (let i = 0; i < chargeL - 1; i++) {
+      const chargeI = charge[i]
+      for (let j = i + 1; j < chargeL; j++) {
+        const chargeJ = charge[j]
+        const x1 = w / 2 - chargeI[0]
+        const y1 = h / 2 - chargeI[1]
+        const q1 = chargeI[4]
+        const x2 = w / 2 - chargeJ[0]
+        const y2 = h / 2 - chargeJ[1]
+        const q2 = chargeJ[4]
         const ri = 1 / ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
         const f = k * Math.sqrt(ri * ri * ri) * q1 * q2
         const fx = f * (x1 - x2)
@@ -117,10 +137,10 @@ export class ElectricField {
         tentativeForceY.push([j, i, -fy])
       }
     }
-    for (let i = 0; i < this.charge.length; i++) {
+    for (let i = 0; i < chargeL; i++) {
       const temporaryX = []
       const temporaryY = []
-      for (let j = 0; j < this.charge.length; j++) {
+      for (let j = 0; j < chargeL; j++) {
         if (i !== j) {
           const index = tentativeForceX.map((elm, idx) => elm[0] === i && elm[1] === j ? idx : '').find(String)
           temporaryX.push(tentativeForceX[index][2])
@@ -134,13 +154,18 @@ export class ElectricField {
   }
 
   convertPolarCoulombForce () {
-    for (let i = 0; i < this.charge.length; i++) {
+    const forceX = this.force_x
+    const forceY = this.force_y
+    const chargeL = this.charge.length
+    for (let i = 0; i < chargeL; i++) {
       const temporaryR = []
       const temporaryTheta = []
-      for (let j = 0; j < this.charge.length - 1; j++) {
-        temporaryR.push(Math.sqrt(this.force_x[i][j] * this.force_x[i][j] + this.force_y[i][j] * this.force_y[i][j]))
-        let theta = Math.atan(this.force_y[i][j] / this.force_x[i][j])
-        if (this.force_x[i][j] === 0 && this.force_y[i][j] === 0) { theta = 0 }
+      for (let j = 0; j < chargeL - 1; j++) {
+        const forceXIJ = forceX[i][j]
+        const forceYIJ = forceY[i][j]
+        temporaryR.push(Math.sqrt(forceXIJ * forceXIJ + forceYIJ[i][j] * forceYIJ[i][j]))
+        let theta = Math.atan(forceYIJ[i][j] / forceXIJ)
+        if (forceXIJ === 0 && forceYIJ[i][j] === 0) { theta = 0 }
         temporaryTheta.push(theta)
       }
       this.force_r.push(temporaryR)
@@ -154,36 +179,48 @@ export class ElectricField {
     for (let i = 0; i < this.charge.length; i++) {
       this.sum_force_x.push(this.force_x[i].reduce(reducer))
       this.sum_force_y.push(this.force_y[i].reduce(reducer))
-      this.sum_force_r.push(Math.sqrt(this.sum_force_x[i] * this.sum_force_x[i] + this.sum_force_y[i] * this.sum_force_y[i]))
-      let theta = Math.atan(this.sum_force_y[i] / this.sum_force_x[i])
-      if (this.sum_force_x[i] === 0 && this.sum_force_y[i] === 0) { theta = 0 }
+      const sumForceXI = this.sum_force_x[i]
+      const sumForceYI = this.sum_force_y[i]
+      this.sum_force_r.push(Math.sqrt(sumForceXI * sumForceXI + sumForceYI * sumForceYI))
+      let theta = Math.atan(sumForceYI / sumForceXI)
+      if (sumForceXI === 0 && sumForceYI === 0) { theta = 0 }
       this.sum_force_theta.push(theta)
     }
+    return this
   }
 
   calcPositions () {
+    const width = this.width
+    const height = this.height
+    const sumForceX = this.sum_force_x
+    const sumForceY = this.sum_force_y
+    const charge = this.charge
     for (let i = 0; i < this.charge.length; i++) {
-      if (this.charge[i][0] >= this.width / 2) {
-        this.charge[i][2] = -0.9 * (this.charge[i][2] - this.sum_force_x[i] / 1000)
-        this.charge[i][0] = this.width / 2
-      } else if (this.charge[i][0] <= -this.width / 2) {
-        this.charge[i][2] = -0.9 * (this.charge[i][2] - this.sum_force_x[i] / 1000)
-        this.charge[i][0] = -this.width / 2
+      const sumForceXI = sumForceX[i]
+      const sumForceYI = sumForceY[i]
+      const chargeI = charge[i]
+      if (chargeI[0] >= width / 2) {
+        chargeI[2] = -0.9 * (chargeI[2] - sumForceXI / 1000)
+        chargeI[0] = width / 2
+      } else if (chargeI[0] <= -width / 2) {
+        chargeI[2] = -0.9 * (chargeI[2] - sumForceXI / 1000)
+        chargeI[0] = -width / 2
       } else {
-        this.charge[i][2] = this.charge[i][2] - this.sum_force_x[i] / 1000
-        this.charge[i][0] = this.charge[i][0] + this.charge[i][2] / 1000 + this.sum_force_x[i] / 600000
+        chargeI[2] = chargeI[2] - sumForceXI / 1000
+        chargeI[0] = chargeI[0] + chargeI[2] / 1000 + sumForceXI / 600000
       }
-      if (this.charge[i][1] >= this.height / 2) {
-        this.charge[i][3] = -0.9 * (this.charge[i][3] - this.sum_force_y[i] / 1000)
-        this.charge[i][1] = this.height / 2
-      } else if (this.charge[i][1] <= -this.height / 2) {
-        this.charge[i][3] = -0.9 * (this.charge[i][3] - this.sum_force_y[i] / 1000)
-        this.charge[i][1] = -this.height / 2
+      if (chargeI[1] >= height / 2) {
+        chargeI[3] = -0.9 * (chargeI[3] - sumForceYI / 1000)
+        chargeI[1] = height / 2
+      } else if (chargeI[1] <= -height / 2) {
+        chargeI[3] = -0.9 * (chargeI[3] - sumForceYI / 1000)
+        chargeI[1] = -height / 2
       } else {
-        this.charge[i][3] = this.charge[i][3] - this.sum_force_y[i] / 1000
-        this.charge[i][1] = this.charge[i][1] + this.charge[i][3] / 1000 + this.sum_force_y[i] / 600000
+        chargeI[3] = chargeI[3] - sumForceYI / 1000
+        chargeI[1] = chargeI[1] + chargeI[3] / 1000 + sumForceYI / 600000
       }
     }
+    return this
   }
 
   renderR (gpuCanvas) {

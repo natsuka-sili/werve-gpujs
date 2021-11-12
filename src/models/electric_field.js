@@ -197,6 +197,7 @@ export class ElectricField {
     const chargeL = charge.length
     this.sum_force_from_electric_field_x = new Array(chargeL).fill(0.0)
     for (let i = 0; i < chargeL; i++) {
+      console.log('x =', charge[i][0], 'y =', charge[i][1])
       this.sum_force_from_electric_field_x[i] = charge[i][4] * this.electric_field_x[Math.round(charge[i][1])][Math.round(charge[i][0])]
     }
   }
@@ -260,6 +261,6 @@ export class ElectricField {
       output: [2 * this.height - 1, 2 * this.width - 1],
       graphical: true
     })
-    kernel(this.template_electric_field_x)
+    kernel(this.template_electric_field_y)
   }
 };

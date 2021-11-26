@@ -64,14 +64,37 @@ export class Verve {
       const x = this.thread.x
       const y = this.thread.y
       return array1[y][x] + array2[y + this.constants.h - 1 - yc][x + this.constants.w - 1 - xc] * qc
-    }, {
-      constants: { w: w, h: h },
-      output: [h, w]
-    })
+    }).setConstants({ w: w, h: h }).setOutput([h, w])
+    // , {
+    //   constants: { w: w, h: h },
+    //   output: [h, w]
+    // })
     for (let i = 0; i < charge.length; i++) {
       const chargeI = charge[i]
-      const x = Math.round(chargeI[0]) // $$$$$$$$$$$$$$$$$$$$$$$$$
-      const y = Math.round(chargeI[1]) // $$$$$$$$$$$$$$$$$$$$$$$$$
+      const x = chargeI[0]
+      const y = chargeI[1]
+      const q = chargeI[4]
+      this.electric_field_x = kernel(this.electric_field_x, this.template_electric_field_x, x, y, q)
+      this.electric_field_y = kernel(this.electric_field_y, this.template_electric_field_y, x, y, q)
+    }
+    return this
+  }
+
+  superposeElectricFieldGpu = function (array1, array2, xc, yc, qc) {
+    const x = this.thread.x
+    const y = this.thread.y
+    return array1[y][x] + array2[y + this.constants.h - 1 - yc][x + this.constants.w - 1 - xc] * qc
+  }
+
+  superposeElectricFieldKernel (kernel) {
+    const w = this.width
+    const h = this.height
+    this.electric_field_x = new Array(h).fill(new Array(w).fill(0.0))
+    this.electric_field_y = new Array(h).fill(new Array(w).fill(0.0))
+    for (let i = 0; i < this.charge.length; i++) {
+      const chargeI = this.charge[i]
+      const x = chargeI[0]
+      const y = chargeI[1]
       const q = chargeI[4]
       this.electric_field_x = kernel(this.electric_field_x, this.template_electric_field_x, x, y, q)
       this.electric_field_y = kernel(this.electric_field_y, this.template_electric_field_y, x, y, q)
@@ -86,18 +109,36 @@ export class Verve {
       const x = this.thread.x
       const y = this.thread.y
       return Math.sqrt(array1[y][x] * array1[y][x] + array2[y][x] * array2[y][x])
-    }, {
-      output: [h, w]
-    })
+    }).setOutput([h, w])
     const kernelTheta = gpu.createKernel(function (array1, array2) {
       const x = this.thread.x
       const y = this.thread.y
       let theta = Math.atan(array2[y][x] / array1[y][x])
       if (array2[y][x] === 0 && array1[y][x] === 0) { theta = 0 }
       return theta
-    }, {
-      output: [h, w]
-    })
+    }).setOutput([h, w])
+    const electricFieldX = this.electric_field_x
+    const electricFieldY = this.electric_field_y
+    this.electric_field_r = kernelR(electricFieldX, electricFieldY)
+    this.electric_field_theta = kernelTheta(electricFieldX, electricFieldY)
+    return this
+  }
+
+  convertPolarElectricFieldGpuR = function (array1, array2) {
+    const x = this.thread.x
+    const y = this.thread.y
+    return Math.sqrt(array1[y][x] * array1[y][x] + array2[y][x] * array2[y][x])
+  }
+
+  convertPolarElectricFieldGpuTheta = function (array1, array2) {
+    const x = this.thread.x
+    const y = this.thread.y
+    let theta = Math.atan(array2[y][x] / array1[y][x])
+    if (array2[y][x] === 0 && array1[y][x] === 0) { theta = 0 }
+    return theta
+  }
+
+  convertPolarElectricFieldKernel(kernelR, kernelTheta) {
     const electricFieldX = this.electric_field_x
     const electricFieldY = this.electric_field_y
     this.electric_field_r = kernelR(electricFieldX, electricFieldY)
@@ -200,8 +241,8 @@ export class Verve {
     this.sum_force_x2 = new Array(chargeL).fill(0.0)
     this.sum_force_y2 = new Array(chargeL).fill(0.0)
     for (let i = 0; i < chargeL; i++) {
-      const x = Math.round(charge[i][0])
-      const y = Math.round(charge[i][1])
+      const x = charge[i][0]
+      const y = charge[i][1]
       const q = charge[i][4]
       this.sum_force_x2[i] = q * electricFieldX[y][x]
       this.sum_force_y2[i] = q * electricFieldY[y][x]
@@ -221,7 +262,7 @@ export class Verve {
       const chargeI = charge[i]
       const CoefficientOfRestitution = -0.1
       chargeI[2] = chargeI[2] - sumForceXI / 1000
-      chargeI[0] = chargeI[0] + chargeI[2] / 1000 + sumForceXI / 600000
+      chargeI[0] = chargeI[0] + Math.trunc(chargeI[2] / 1000 + sumForceXI / 600000)
       if (chargeI[0] >= w - 1) {
         chargeI[2] = CoefficientOfRestitution * chargeI[2]
         chargeI[0] = w - 1
@@ -230,7 +271,7 @@ export class Verve {
         chargeI[0] = 0
       }
       chargeI[3] = chargeI[3] - sumForceYI / 1000
-      chargeI[1] = chargeI[1] + chargeI[3] / 1000 + sumForceYI / 600000
+      chargeI[1] = chargeI[1] + Math.trunc(chargeI[3] / 1000 + sumForceYI / 600000)
       if (chargeI[1] >= h - 1) {
         chargeI[3] = CoefficientOfRestitution * chargeI[3]
         chargeI[1] = h - 1
@@ -238,28 +279,6 @@ export class Verve {
         chargeI[3] = CoefficientOfRestitution * chargeI[3]
         chargeI[1] = 0
       }
-      /*
-      if (chargeI[0] >= width - 1) {
-        chargeI[2] = -0.9 * (chargeI[2] - sumForceXI / 1000)
-        chargeI[0] = width - 1
-      } else if (chargeI[0] <= 0) {
-        chargeI[2] = -0.9 * (chargeI[2] - sumForceXI / 1000)
-        chargeI[0] = 0
-      } else {
-        chargeI[2] = chargeI[2] - sumForceXI / 1000
-        chargeI[0] = chargeI[0] + chargeI[2] / 1000 + sumForceXI / 600000
-      }
-      if (chargeI[1] >= height - 1) {
-        chargeI[3] = -0.9 * (chargeI[3] - sumForceYI / 1000)
-        chargeI[1] = height - 1
-      } else if (chargeI[1] <= 0) {
-        chargeI[3] = -0.9 * (chargeI[3] - sumForceYI / 1000)
-        chargeI[1] = 0
-      } else {
-        chargeI[3] = chargeI[3] - sumForceYI / 1000
-        chargeI[1] = chargeI[1] + chargeI[3] / 1000 + sumForceYI / 600000
-      }
-*/
     }
     return this
   }
@@ -271,10 +290,19 @@ export class Verve {
       // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
       const color = array[y][x] / 8987551
       this.color(color, color, color, 1)
-    }, {
-      output: [this.height, this.width],
-      graphical: true
-    })
+    }).setOutput([this.height, this.width]).setGraphical(true)
+    kernel(this.electric_field_r)
+  }
+
+  renderRGpu = function (array) {
+    const x = this.thread.x
+    const y = this.thread.y
+    // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
+    const color = array[y][x] / 8987551
+    this.color(color, color, color, 1)
+  }
+
+  renderRKernel (kernel) {
     kernel(this.electric_field_r)
   }
 

@@ -2,41 +2,32 @@ import { GPU } from 'gpu.js'
 import { Verve } from './models/verve.js'
 
 const canvas = document.getElementById('canvas')
-const canvas2 = document.getElementById('canvas2')
 const gpu = new GPU()
 const gpuCanvas = new GPU({ canvas: canvas })
-const gpuCanvas2 = new GPU({ canvas: canvas2 })
-const width = 400
-const height = 400
+const width = 200
+const height = 200
 
 const a = new Verve(width, height)
 a.calcElectricFieldTemplate(gpu)
-a.renderTemplate(gpuCanvas2)
 a.setElectricCharge(0, 0, 1)
 a.setElectricCharge(99, 50, 1)
-a.setElectricCharge(199, 25, 1)
+a.setElectricCharge(50, 25, 1)
+
+const kernelSuperposeElectricField = gpu.createKernel(a.superposeElectricFieldGpu).setConstants({ w: width, h: height }).setOutput([height, width])
+const kernelconvertPolarElectricFieldR = gpu.createKernel(a.convertPolarElectricFieldGpuR).setOutput([height, width])
+const kernelconvertPolarElectricFieldTheta = gpu.createKernel(a.convertPolarElectricFieldGpuTheta).setOutput([height, width])
+const kernelRenderR = gpuCanvas.createKernel(a.renderRGpu).setOutput([height, width]).setGraphical(true)
 
 const move = () => {
-  a.superposeElectricField(gpu)
-  a.convertPolarElectricField(gpu)
-  // a.calcCoulombForce()
-  // a.sumCoulombForce()
+  a.superposeElectricFieldKernel(kernelSuperposeElectricField)
+  // a.superposeElectricField(gpu)
+  a.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
+  // a.convertPolarElectricField(gpu)
   a.calcSumCoulombForce()
   a.calcPositions()
-  console.log(a.sum_force_x, a.sum_force_x2)
-  a.renderR(gpuCanvas)
+  a.renderRKernel(kernelRenderR)
+  // a.renderR(gpuCanvas)
   requestAnimationFrame(move)
-}
-
-const stop = () => {
-  a.superposeElectricField(gpu)
-  a.convertPolarElectricField(gpu)
-  // a.calcCoulombForce()
-  // a.sumCoulombForce()
-  a.calcSumCoulombForce()
-  a.calcPositions()
-  console.log(a.sum_force_x, a.sum_force_x2)
-  a.renderR(gpuCanvas)
 }
 
 move()

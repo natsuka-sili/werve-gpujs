@@ -20,13 +20,10 @@ const kernelRenderR = gpuCanvas.createKernel(a.renderRGpu).setOutput([height, wi
 
 const move = () => {
   a.superposeElectricFieldKernel(kernelSuperposeElectricField)
-  // a.superposeElectricField(gpu)
   a.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
-  // a.convertPolarElectricField(gpu)
   a.calcSumCoulombForce()
   a.calcPositions()
   a.renderRKernel(kernelRenderR)
-  // a.renderR(gpuCanvas)
   requestAnimationFrame(move)
 }
 

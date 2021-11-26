@@ -28,6 +28,10 @@
   },
   "type": "module",
   "dependencies": {
-    "gpu.js": "^2.11.4"
+    "add": "^2.0.6",
+    "babel-eslint": "^10.1.0",
+    "global": "^4.4.0",
+    "gpu.js": "^2.11.4",
+    "yarn": "^1.22.17"
   }
 }

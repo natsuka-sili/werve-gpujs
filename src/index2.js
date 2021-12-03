@@ -9,16 +9,14 @@ const width = 200
 const height = 200
 
 const e = new ElectricField(width, height)
-e.setArrays()
 e.calcElectricFieldTemplate(gpu)
 
-const c1 = new Charge(0, 0, 1, width, height)
-const c2 = new Charge(99, 50, 1, width, height)
-const c3 = new Charge(150, 199, 1, width, height)
+const c = []
+c.push(new Charge(0, 0, 1, width, height))
+c.push(new Charge(99, 50, 1, width, height))
+c.push(new Charge(150, 199, 1, width, height))
 
-e.inputCharge(c1)
-e.inputCharge(c2)
-e.inputCharge(c3)
+e.inputCharge(c)
 
 const kernelSuperposeElectricFieldFirst = gpu.createKernel(e.superposeElectricFieldFirstGpu).setConstants({ w: width, h: height }).setOutput([height, width])
 const kernelSuperposeElectricField = gpu.createKernel(e.superposeElectricFieldGpu).setConstants({ w: width, h: height }).setOutput([height, width])
@@ -31,12 +29,12 @@ const move = () => {
   e.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
   e.renderRKernel(kernelRenderR)
 
-  c1.calcCoulombForce(e.electric_field_x, e.electric_field_y)
-  c1.calcPositions()
-  c2.calcCoulombForce(e.electric_field_x, e.electric_field_y)
-  c2.calcPositions()
-  c3.calcCoulombForce(e.electric_field_x, e.electric_field_y)
-  c3.calcPositions()
+  for (let i = 0; i < c.length; i++) {
+    c[i].calcCoulombForce(e.electric_field_x, e.electric_field_y)
+    c[i].calcPositions()
+  }
+
+  // e.inputCharge(c)
 
   requestAnimationFrame(move)
 }

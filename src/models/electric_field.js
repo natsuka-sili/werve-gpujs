@@ -4,18 +4,8 @@ export class ElectricField {
     this.height = height
   }
 
-  setArrays () {
-    this.charge = []
-    this.template_electric_field_x = []
-    this.template_electric_field_y = []
-    this.electric_field_x = []
-    this.electric_field_y = []
-    this.electric_field_r = []
-    this.electric_field_theta = []
-  }
-
   inputCharge (c) {
-    this.charge.push(c)
+    this.charge = c
     return this
   }
 

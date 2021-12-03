@@ -11,7 +11,7 @@ const a = new Verve(width, height)
 a.calcElectricFieldTemplate(gpu)
 a.setElectricCharge(0, 0, 1)
 a.setElectricCharge(99, 50, 1)
-a.setElectricCharge(50, 25, 1)
+a.setElectricCharge(150, 199, 1)
 
 const kernelSuperposeElectricField = gpu.createKernel(a.superposeElectricFieldGpu).setConstants({ w: width, h: height }).setOutput([height, width])
 const kernelconvertPolarElectricFieldR = gpu.createKernel(a.convertPolarElectricFieldGpuR).setOutput([height, width])
@@ -28,3 +28,9 @@ const move = () => {
 }
 
 move()
+// a.superposeElectricFieldKernel(kernelSuperposeElectricField)
+// a.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
+// a.calcSumCoulombForce()
+// a.calcPositions()
+// a.renderRKernel(kernelRenderR)
+// console.log(a)

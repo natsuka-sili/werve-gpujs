@@ -1,6 +1,6 @@
 import { GPU } from 'gpu.js'
-import { Charge } from './models/charge3.js'
-import { ElectricField } from './models/electric_field3.js'
+import { Charge } from './models/3charge.js'
+import { ElectricField } from './models/3electric_field.js'
 
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()
@@ -28,11 +28,9 @@ function addChargeFunction () {
   c.setElectricCharge([x, y, tmp[2]])
 }
 function stopSimulationFunction () {
-  console.log('test')
   cancelAnimationFrame(callback)
 }
 function startSimulationFunction () {
-  console.log('test')
   cancelAnimationFrame(callback)
   simulate()
 }
@@ -54,8 +52,6 @@ const e = new ElectricField(width, height)
 e.calcElectricFieldTemplate(gpu)
 
 const c = new Charge()
-// c.setElectricCharge([150, 50, 1])
-// c.setElectricCharge([50, 150, 1])
 
 const kernelSuperposeElectricFieldFirst = gpu.createKernel(e.superposeElectricFieldFirstGpu).setConstants({ w: width, h: height }).setOutput([height, width])
 const kernelSuperposeElectricField = gpu.createKernel(e.superposeElectricFieldGpu).setConstants({ w: width, h: height }).setOutput([height, width])
@@ -63,17 +59,4 @@ const kernelconvertPolarElectricFieldR = gpu.createKernel(e.convertPolarElectric
 const kernelconvertPolarElectricFieldTheta = gpu.createKernel(e.convertPolarElectricFieldGpuTheta).setOutput([height, width])
 const kernelRenderR = gpuCanvas.createKernel(e.renderRGpu).setOutput([height, width]).setGraphical(true)
 
-const move = () => {
-  if (c.l === 0) {
-    requestAnimationFrame(move)
-  } else {
-    e.superposeElectricFieldKernel(kernelSuperposeElectricFieldFirst, kernelSuperposeElectricField, c)
-    e.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
-    e.renderRKernel(kernelRenderR)
-    c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
-    c.calcPositions(width, height)
-    requestAnimationFrame(move)
-  }
-}
-// move()
 simulate()

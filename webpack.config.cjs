@@ -2,7 +2,7 @@ const path = require('path') // pathモジュールの読み込み
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: './src/index3.js', // エントリポイント（デフォルトと同じ設定）
+  entry: './src/3index.js', // エントリポイント（デフォルトと同じ設定）
   output: { // 出力先（デフォルトと同じ設定）
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist')

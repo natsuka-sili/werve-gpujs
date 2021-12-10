@@ -46,15 +46,14 @@ export class ElectricField {
     return array1[y][x] + array2[y + this.constants.h - 1 - yc][x + this.constants.w - 1 - xc] * qc
   }
 
-  superposeElectricFieldKernel (kernel1, kernel) {
-    const charge = this.charge
+  superposeElectricFieldKernel (kernel1, kernel, charge) {
     const tempX = this.template_electric_field_x
     const tempY = this.template_electric_field_y
-    this.electric_field_x = kernel1(this.template_electric_field_x, charge[0].x, charge[0].y, charge[0].q)
-    this.electric_field_y = kernel1(this.template_electric_field_y, charge[0].x, charge[0].y, charge[0].q)
-    for (let i = 1; i < this.charge.length; i++) {
-      this.electric_field_x = kernel(this.electric_field_x, tempX, charge[i].x, charge[i].y, charge[i].q)
-      this.electric_field_y = kernel(this.electric_field_y, tempY, charge[i].x, charge[i].y, charge[i].q)
+    this.electric_field_x = kernel1(this.template_electric_field_x, charge.x[0], charge.y[0], charge.q[0])
+    this.electric_field_y = kernel1(this.template_electric_field_y, charge.x[0], charge.y[0], charge.q[0])
+    for (let i = 1; i < charge.l; i++) {
+      this.electric_field_x = kernel(this.electric_field_x, tempX, charge.x[i], charge.y[i], charge.q[i])
+      this.electric_field_y = kernel(this.electric_field_y, tempY, charge.x[i], charge.y[i], charge.q[i])
     }
     return this
   }

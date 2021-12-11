@@ -4,16 +4,19 @@
   <head>
     <meta charset="UTF-8">
     <title>verve</title>
-    <script src="main.js"></script>
   </head>
   
   <body>
-    <label>x, y, q : <input type="text" id="Charge"></label>
-    <input type="submit" value="add" id="addCharge">
+    <!--<label>x, y, q : <input type="text" id="Charge"></label>-->
+    <!--<input type="submit" value="add" id="addCharge">-->
     <input type="button" value="start" id="startSimulation">
     <input type="button" value="stop" id="stopSimulation">
-
+    
+    <input type="range" id="example" min="-3" max="3" step="1" value="1">
+    <span id="current-value"></span>
+    
     <canvas id="canvas"></canvas>
+    <script src="main.js"></script>
   </body>
 
 </html>

@@ -20,6 +20,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-vue": "^7.11.1",
+    "hard-source-webpack-plugin": "^0.13.1",
     "html-loader": "^3.0.0",
     "html-webpack-plugin": "^5.4.0",
     "jest": "^27.0.4",

@@ -8,21 +8,17 @@ const gpuCanvas = new GPU({ canvas: canvas })
 const width = 300
 const height = 300
 
-const targets = document.querySelectorAll('input[type=\'checkbox\']')
-for (const target of targets) {
-  target.addEventListener('change', () => {
-    // document.querySelector('#output').innerHTML = `${target.value} : ${target.checked}`
-    // console.log(target.checked)
-    if (target.checked === true) {
-      document.getElementById('l1').innerText = 'stop'
-      cancelAnimationFrame(callback)
-      simulate()
-    } else {
-      document.getElementById('l1').innerText = 'start'
-      cancelAnimationFrame(callback)
-    }
-  })
-}
+const simulation = document.getElementById('simulation')
+simulation.addEventListener('change', () => {
+  if (simulation.checked === true) {
+    document.getElementById('simulationL').innerText = 'stop'
+    cancelAnimationFrame(callback)
+    simulate()
+  } else {
+    document.getElementById('simulationL').innerText = 'start'
+    cancelAnimationFrame(callback)
+  }
+})
 
 const inputElem = document.getElementById('example')
 const currentValueElem = document.getElementById('current-value')
@@ -65,35 +61,7 @@ function simulate () {
     callback = requestAnimationFrame(simulate)
   }
 }
-/*
-function addChargeFunction () {
-  const tmp = nameText.value.split(',').map(Number)
-  const x = Math.min(width - 1, tmp[0])
-  const y = Math.min(height - 1, tmp[1])
-  c.setElectricCharge([x, y, tmp[2]])
-}
-const nameText = document.getElementById('Charge')
-const addCharge = document.getElementById('addCharge')
-if (addCharge) {
-  addCharge.addEventListener('click', addChargeFunction)
-}
 
-function stopSimulationFunction () {
-  cancelAnimationFrame(callback)
-}
-function startSimulationFunction () {
-  cancelAnimationFrame(callback)
-  simulate()
-}
-const stopSimulation = document.getElementById('stopSimulation')
-if (stopSimulation) {
-  stopSimulation.addEventListener('click', stopSimulationFunction)
-}
-const startSimulation = document.getElementById('startSimulation')
-if (startSimulation) {
-  startSimulation.addEventListener('click', startSimulationFunction)
-}
-*/
 const e = new ElectricField(width, height)
 e.calcElectricFieldTemplate(gpu)
 

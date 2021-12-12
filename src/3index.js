@@ -8,12 +8,28 @@ const gpuCanvas = new GPU({ canvas: canvas })
 const width = 300
 const height = 300
 
+const targets = document.querySelectorAll('input[type=\'checkbox\']')
+for (const target of targets) {
+  target.addEventListener('change', () => {
+    // document.querySelector('#output').innerHTML = `${target.value} : ${target.checked}`
+    // console.log(target.checked)
+    if (target.checked === true) {
+      document.getElementById('l1').innerText = 'stop'
+      cancelAnimationFrame(callback)
+      simulate()
+    } else {
+      document.getElementById('l1').innerText = 'start'
+      cancelAnimationFrame(callback)
+    }
+  })
+}
+
 const inputElem = document.getElementById('example')
 const currentValueElem = document.getElementById('current-value')
 const setCurrentValue = (val) => {
   currentValueElem.innerText = val
 }
-const rangeOnChange = (e) =>{
+const rangeOnChange = (e) => {
   setCurrentValue(e.target.value)
 }
 window.onload = () => {
@@ -25,16 +41,16 @@ function canvasClick (a) {
   const rect = a.target.getBoundingClientRect()
   const viewX = a.clientX - rect.left
   const viewY = a.clientY - rect.top
-  const scaleWidth =  canvas.clientWidth / width
-  const scaleHeight =  canvas.clientHeight / height
-  const canvasX = Math.floor( viewX / scaleWidth )
-  const canvasY = Math.floor( viewY / scaleHeight )
-  console.log( canvasX,canvasY,inputElem.value,Number(inputElem.value) )
+  const scaleWidth = canvas.clientWidth / width
+  const scaleHeight = canvas.clientHeight / height
+  const canvasX = Math.floor(viewX / scaleWidth)
+  const canvasY = Math.floor(viewY / scaleHeight)
+  console.log(canvasX, canvasY, inputElem.value, Number(inputElem.value))
   if (Number(inputElem.value) !== 0) {
     c.setElectricCharge([canvasX, height - canvasY, Number(inputElem.value)])
   }
 }
-canvas.addEventListener("click", canvasClick, false)
+canvas.addEventListener('click', canvasClick, false)
 
 let callback
 function simulate () {
@@ -61,7 +77,7 @@ const addCharge = document.getElementById('addCharge')
 if (addCharge) {
   addCharge.addEventListener('click', addChargeFunction)
 }
-*/
+
 function stopSimulationFunction () {
   cancelAnimationFrame(callback)
 }
@@ -77,7 +93,7 @@ const startSimulation = document.getElementById('startSimulation')
 if (startSimulation) {
   startSimulation.addEventListener('click', startSimulationFunction)
 }
-
+*/
 const e = new ElectricField(width, height)
 e.calcElectricFieldTemplate(gpu)
 

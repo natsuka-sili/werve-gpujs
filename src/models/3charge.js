@@ -42,23 +42,44 @@ export class Charge {
     const fy = this.fy
     for (let i = 0; i < this.l; i++) {
       const CoefficientOfRestitution = -0.1
-      vx[i] = vx[i] - fx[i] / 1000
-      x[i] = x[i] + Math.trunc(vx[i] / 1000 + fx[i] / 600000)
+      // const t = 1 / 1000
+      // const m = 1
+      const t = 1 / 50000
+      const m = 1 / 500
+      vx[i] = vx[i] - fx[i] / m * t
+      x[i] = x[i] + Math.trunc(vx[i] * t + fx[i] / m * t * t / 2)
       if (x[i] >= w - 1) {
         vx[i] = CoefficientOfRestitution * vx[i]
-        x[i] = w - 1
+        x[i] = w - 2
       } else if (x[i] <= 0) {
         vx[i] = CoefficientOfRestitution * vx[i]
-        x[i] = 0
+        x[i] = 1
       }
-      vy[i] = vy[i] - fy[i] / 1000
-      y[i] = y[i] + Math.trunc(vy[i] / 1000 + fy[i] / 600000)
+      vy[i] = vy[i] - fy[i] / m * t
+      y[i] = y[i] + Math.trunc(vy[i] * t + fy[i] / m * t * t / 2)
       if (y[i] >= h - 1) {
         vy[i] = CoefficientOfRestitution * vy[i]
-        y[i] = h - 1
+        y[i] = h - 2
       } else if (y[i] <= 0) {
         vy[i] = CoefficientOfRestitution * vy[i]
-        y[i] = 0
+        y[i] = 1
+      }
+      if (i!==0) {
+        if(x[i-1] === x[i]){
+          if(x[i] < w/2){
+            x[i]++
+          }else{
+            x[i]--
+          }
+        }
+        if(y[i-1] === y[i]){
+          if(y[i] < h/2){
+            y[i]++
+          }else{
+            y[i]--
+          }
+        }
+        
       }
     }
     return this

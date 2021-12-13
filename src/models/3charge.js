@@ -40,12 +40,13 @@ export class Charge {
     const vy = this.vy
     const fx = this.fx
     const fy = this.fy
+    const q = this.q.map(Math.abs)
     for (let i = 0; i < this.l; i++) {
       const CoefficientOfRestitution = -0.1
       // const t = 1 / 1000
       // const m = 1
       const t = 1 / 50000
-      const m = 1 / 500
+      const m = q[i] / 500
       vx[i] = vx[i] - fx[i] / m * t
       x[i] = x[i] + Math.trunc(vx[i] * t + fx[i] / m * t * t / 2)
       if (x[i] >= w - 1) {

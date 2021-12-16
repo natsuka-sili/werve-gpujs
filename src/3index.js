@@ -41,7 +41,6 @@ function canvasClick (a) {
   const scaleHeight = canvas.clientHeight / height
   const canvasX = Math.floor(viewX / scaleWidth)
   const canvasY = Math.floor(viewY / scaleHeight)
-  console.log(canvasX, canvasY, inputElem.value, Number(inputElem.value))
   if (Number(inputElem.value) !== 0) {
     c.setElectricCharge([canvasX, height - canvasY, Number(inputElem.value)])
   }

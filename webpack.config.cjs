@@ -8,7 +8,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   cache: {
-    type: 'filesystem',
+    type: 'filesystem'
   },
   plugins: [
     new HtmlWebpackPlugin({

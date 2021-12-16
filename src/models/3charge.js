@@ -42,6 +42,8 @@ export class Charge {
     const fy = this.fy
     const q = this.q.map(Math.abs)
     for (let i = 0; i < this.l; i++) {
+      const xb = x[i]
+      const yb = y[i]
       const CoefficientOfRestitution = -0.1
       // const t = 1 / 1000
       // const m = 1
@@ -65,22 +67,33 @@ export class Charge {
         vy[i] = CoefficientOfRestitution * vy[i]
         y[i] = 1
       }
-      if (i!==0) {
-        if(x[i-1] === x[i]){
-          if(x[i] < w/2){
-            x[i]++
-          }else{
-            x[i]--
+      if (i !== 0) {
+        // if (x[i - 1] === x[i]) {
+        const r = 10
+        if (x[i - 1] + r <= x[i] && x[i - 1] - r >= x[i]) {
+          /*
+          if (x[i] < w / 2) {
+            // x[i]++
+            x[i] = x[i] + r
+          } else {
+            // x[i]--
+            x[i] = x[i] - r
           }
+          */
+          x[i] = xb
+          vx[i] = -CoefficientOfRestitution * CoefficientOfRestitution * vx[i]
         }
-        if(y[i-1] === y[i]){
-          if(y[i] < h/2){
-            y[i]++
-          }else{
-            y[i]--
+        if (y[i - 1] + r <= y[i] && y[i - 1] - r >= y[i]) {
+          /*
+          if (y[i] < h / 2) {
+            y[i] = y[i] + r
+          } else {
+            y[i] = y[i] - r
           }
+          */
+          y[i] = yb
+          vy[i] = -CoefficientOfRestitution * CoefficientOfRestitution * vy[i]
         }
-        
       }
     }
     return this

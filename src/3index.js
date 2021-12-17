@@ -1,6 +1,16 @@
 import { GPU } from 'gpu.js'
 import { Charge } from './models/3charge.js'
 import { ElectricField } from './models/3electric_field.js'
+import { arrowTest } from './models/3canvas_arrow.js'
+
+const test = document.getElementById('test_arrow')
+const context = test.getContext('2d')
+console.log(context)
+arrowTest(CanvasRenderingContext2D)
+context.beginPath()
+const sx = 40; const sy = 50; const ex = 60; const ey = 60; const n = Math.sqrt((ex - sx) * (ex - sx) + (ex - sx) * (ex - sx))
+context.arrow(sx, sy, ex, ey, [0, n / 8, -n / 3, n / 8, -n / 3, n / 3])
+context.fill()
 
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()

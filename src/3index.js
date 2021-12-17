@@ -1,32 +1,21 @@
 import { GPU } from 'gpu.js'
 import { Charge } from './models/3charge.js'
 import { ElectricField } from './models/3electric_field.js'
+import { render } from './models/3canvas_2d.js'
 
 const test = document.getElementById('test_arrow')
 const ctx = test.getContext('2d')
+ctx.imageSmoothingQuality = 'low'
 
 let i = 0
 function drawArrowSaved () {
   i++
   ctx.clearRect(0, 0, 300, 300)
-  function tri () {
-    ctx.moveTo(-5, -3)
-    ctx.lineTo(5, 0)
-    ctx.lineTo(-5, 3)
-    ctx.closePath()
-  }
-  function render (x, y) {
-    ctx.save()
-    ctx.translate(x - i % 123, y - i % 123)
-    ctx.rotate(x / Math.sqrt(y) * i / 100)
-    tri()
-    ctx.restore()
-  }
   ctx.lineWidth = 1
   ctx.beginPath()
   for (let j = 0; j < 15; j++) {
     for (let k = 0; k < 15; k++) {
-      render(j * 30, k * 30)
+      render(j * 30, k * 30, ctx, i)
     }
   }
   ctx.stroke()
@@ -103,5 +92,7 @@ const kernelSuperposeElectricField = gpu.createKernel(e.superposeElectricFieldGp
 const kernelconvertPolarElectricFieldR = gpu.createKernel(e.convertPolarElectricFieldGpuR).setOutput([height, width])
 const kernelconvertPolarElectricFieldTheta = gpu.createKernel(e.convertPolarElectricFieldGpuTheta).setOutput([height, width])
 const kernelRenderR = gpuCanvas.createKernel(e.renderRGpu).setOutput([height, width]).setGraphical(true)
+
+console.log(ctx)
 
 simulate()

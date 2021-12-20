@@ -69,7 +69,7 @@ function simulate () {
     c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
     c.calcPositions(width, height)
 
-    console.log(e.electric_field_x, e.electric_field_y, e.electric_field_theta)
+    console.log(e.electric_field_r)
 
     callback = requestAnimationFrame(simulate)
   }

@@ -70,7 +70,22 @@ export class ElectricField {
     // let theta = Math.atan(array2[y][x] / array1[y][x])
     // if (array2[y][x] === 0 && array1[y][x] === 0) { theta = 0 }
     // return theta
-    return Math.atan2(array2[y][x], array1[y][x])
+    if (array1[y][x] < 0 && array2[y][x] > 0) {
+      return Math.atan2(array2[y][x], array1[y][x]) + Math.PI
+    } else if (array1[y][x] < 0 && array2[y][x] < 0) {
+      return Math.atan2(array2[y][x], array1[y][x]) - Math.PI
+    } else if (array1[y][x] === 0 && array2[y][x] > 0) {
+      return Math.atan2(array2[y][x], array1[y][x]) + Math.PI / 2
+    } else if (array1[y][x] > 0 && array2[y][x] === 0) {
+      return 0
+    } else if (array1[y][x] === 0 && array2[y][x] < 0) {
+      return Math.atan2(array2[y][x], array1[y][x]) - Math.PI / 2
+    } else if (array1[y][x] < 0 && array2[y][x] === 0) {
+      return Math.PI
+    } else {
+      return Math.atan2(array2[y][x], array1[y][x])
+    }
+    // return Math.atan2(array2[y][x], array1[y][x])
   }
 
   convertPolarElectricFieldKernel (kernelR, kernelTheta) {
@@ -86,12 +101,12 @@ export class ElectricField {
     const y = this.thread.y
     // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
     const color = array[y][x] / 8987551
+    this.color(color, color, color, 1)
     // const color = array[y][x] / 1.5
-    // this.color(color, color, color, 1)
-    this.color(color, 0, -color, 1)
+    // this.color(color, 0, -color, 1)
   }
 
   renderRKernel (kernel) {
-    kernel(this.electric_field_y)
+    kernel(this.electric_field_r)
   }
 };

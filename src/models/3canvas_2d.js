@@ -21,9 +21,10 @@ export function Render (w, h, arrayR, arrayTheta, ctx) {
     for (let j = 0; j < h; j += frequency) {
       ctx.save()
       ctx.translate(i, h - j)
-      ctx.rotate(-(arrayTheta[j][i]))
-
-      // ctx.scale(arrayR[i][j], arrayR[i][j])
+      ctx.rotate(Math.PI - arrayTheta[j][i])
+      let scale = arrayR[j][i] / 1000000
+      if (scale > 3) { scale = 3 }
+      ctx.scale(scale, 1)
       tri(ctx)
       ctx.restore()
     }

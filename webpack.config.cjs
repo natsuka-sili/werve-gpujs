@@ -20,5 +20,6 @@ module.exports = {
     //   filename: 'html/sample.html'
     // })
   ],
+  devtool: 'source-map',
   mode: 'development' // モード
 }

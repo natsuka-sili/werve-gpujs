@@ -1,33 +1,20 @@
 import { GPU } from 'gpu.js'
 import { Charge } from './models/3charge.js'
 import { ElectricField } from './models/3electric_field.js'
-import { render } from './models/3canvas_2d.js'
-
-const test = document.getElementById('test_arrow')
-const ctx = test.getContext('2d')
-ctx.imageSmoothingQuality = 'low'
-
-let i = 0
-function drawArrowSaved () {
-  i++
-  ctx.clearRect(0, 0, 300, 300)
-  ctx.lineWidth = 1
-  ctx.beginPath()
-  for (let j = 0; j < 15; j++) {
-    for (let k = 0; k < 15; k++) {
-      render(j * 30, k * 30, ctx, i)
-    }
-  }
-  ctx.stroke()
-  requestAnimationFrame(drawArrowSaved)
-}
-drawArrowSaved()
+import { Render } from './models/3canvas_2d.js'
 
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()
 const gpuCanvas = new GPU({ canvas: canvas })
 const width = 300
 const height = 300
+canvas.width = width
+canvas.height = height
+
+const test = document.getElementById('test_arrow')
+const ctx = test.getContext('2d')
+test.width = width
+test.height = height
 
 const simulation = document.getElementById('simulation')
 simulation.addEventListener('change', () => {
@@ -76,8 +63,14 @@ function simulate () {
     e.superposeElectricFieldKernel(kernelSuperposeElectricFieldFirst, kernelSuperposeElectricField, c)
     e.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
     e.renderRKernel(kernelRenderR)
+
+    Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
+
     c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
     c.calcPositions(width, height)
+
+    console.log(e.electric_field_x, e.electric_field_y, e.electric_field_theta)
+
     callback = requestAnimationFrame(simulate)
   }
 }
@@ -91,8 +84,15 @@ const kernelSuperposeElectricFieldFirst = gpu.createKernel(e.superposeElectricFi
 const kernelSuperposeElectricField = gpu.createKernel(e.superposeElectricFieldGpu).setConstants({ w: width, h: height }).setOutput([height, width])
 const kernelconvertPolarElectricFieldR = gpu.createKernel(e.convertPolarElectricFieldGpuR).setOutput([height, width])
 const kernelconvertPolarElectricFieldTheta = gpu.createKernel(e.convertPolarElectricFieldGpuTheta).setOutput([height, width])
+
+// ここで
+// const context = canvas.getContext('2d')
+// をするとcontextは定義されるがgpuが使えない
+
 const kernelRenderR = gpuCanvas.createKernel(e.renderRGpu).setOutput([height, width]).setGraphical(true)
 
-console.log(ctx)
+// ここで
+// const context = canvas.getContext('2d')
+// をするとcontext = nullとなり定義されない
 
 simulate()

@@ -67,9 +67,10 @@ export class ElectricField {
   convertPolarElectricFieldGpuTheta = function (array1, array2) {
     const x = this.thread.x
     const y = this.thread.y
-    let theta = Math.atan(array2[y][x] / array1[y][x])
-    if (array2[y][x] === 0 && array1[y][x] === 0) { theta = 0 }
-    return theta
+    // let theta = Math.atan(array2[y][x] / array1[y][x])
+    // if (array2[y][x] === 0 && array1[y][x] === 0) { theta = 0 }
+    // return theta
+    return Math.atan2(array2[y][x], array1[y][x])
   }
 
   convertPolarElectricFieldKernel (kernelR, kernelTheta) {
@@ -85,10 +86,12 @@ export class ElectricField {
     const y = this.thread.y
     // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
     const color = array[y][x] / 8987551
-    this.color(color, color, color, 1)
+    // const color = array[y][x] / 1.5
+    // this.color(color, color, color, 1)
+    this.color(color, 0, -color, 1)
   }
 
   renderRKernel (kernel) {
-    kernel(this.electric_field_r)
+    kernel(this.electric_field_y)
   }
 };

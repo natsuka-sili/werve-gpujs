@@ -21,5 +21,19 @@ module.exports = {
     // })
   ],
   devtool: 'source-map',
-  mode: 'development' // モード
+  mode: 'development', // モード
+  module: {
+    rules: [
+      {
+        test: /\.css/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: { url: false }
+          }
+        ]
+      }
+    ]
+  }
 }

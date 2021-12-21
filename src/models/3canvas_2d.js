@@ -1,8 +1,13 @@
 function tri (ctx) {
-  ctx.moveTo(-5, -3)
-  ctx.lineTo(5, 0)
-  ctx.lineTo(-5, 3)
-  ctx.closePath()
+  // ctx.moveTo(-5, -3)
+  // ctx.lineTo(5, 0)
+  // ctx.lineTo(-5, 3)
+  // ctx.closePath()
+  ctx.moveTo(-3, 0)
+  ctx.lineTo(3, 0)
+  ctx.lineTo(1, 2)
+  ctx.moveTo(1, -2)
+  ctx.lineTo(3, 0)
 }
 export function renderTest (x, y, ctx, i) {
   ctx.save()
@@ -19,11 +24,12 @@ export function Render (w, h, arrayR, arrayTheta, ctx) {
   const frequency = 14
   for (let i = 0; i < w; i += frequency) {
     for (let j = 0; j < h; j += frequency) {
-      ctx.save()
-      ctx.translate(i, h - j)
-      ctx.rotate(Math.PI - arrayTheta[j][i])
       let scale = arrayR[j][i] / 1000000
       if (scale > 3) { scale = 3 }
+      ctx.save()
+      // ctx.strokeStyle = `rgb(${Math.floor(scale * 85)}, 0, ${255 - Math.floor(scale * 85)})`
+      ctx.translate(i, h - j)
+      ctx.rotate(Math.PI - arrayTheta[j][i])
       ctx.scale(scale, 1)
       tri(ctx)
       ctx.restore()

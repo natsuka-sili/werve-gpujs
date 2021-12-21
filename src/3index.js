@@ -1,4 +1,5 @@
 import { GPU } from 'gpu.js'
+// import './style.css'
 import { Charge } from './models/3charge.js'
 import { ElectricField } from './models/3electric_field.js'
 import { Render } from './models/3canvas_2d.js'
@@ -68,8 +69,6 @@ function simulate () {
 
     c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
     c.calcPositions(width, height)
-
-    console.log(e.electric_field_r)
 
     callback = requestAnimationFrame(simulate)
   }

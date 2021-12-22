@@ -33,7 +33,8 @@ export class Charge {
       this.fy[i] = q[i] * electricFieldY[y[i]][x[i]]
       const fx = this.fx[i]
       const fy = this.fy[i]
-      this.fr[i] = Math.sqrt(fx * fx + fy * fy)
+      this.fr[i] = Math.hypot(fx, fy)
+      // this.fr[i] = Math.sqrt(fx * fx + fy * fy)
       this.ftheta[i] = Math.atan2(fy, fx)
     }
     console.log(this.fr, this.ftheta)

@@ -14,8 +14,10 @@ canvas.height = height
 
 const test = document.getElementById('test_arrow')
 const ctx = test.getContext('2d')
-test.width = width
-test.height = height
+test.width = 2 * width
+test.height = 2 * height
+// test.width = width
+// test.height = height
 
 const simulation = document.getElementById('simulation')
 simulation.addEventListener('change', () => {
@@ -83,18 +85,18 @@ function simulate () {
     }
 
     if (render2.checked) {
-      clear(ctx)
+      clear(width, height, ctx)
       Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
       RenderCircle(height, c, ctx)
       if (render5.checked) {
         RenderForce(height, c, ctx)
       }
     } else if (render5.checked) {
-      clear(ctx)
+      clear(width, height, ctx)
       RenderCircle(height, c, ctx)
       RenderForce(height, c, ctx)
     } else {
-      clear(ctx)
+      clear(width, height, ctx)
     }
 
     if (time.checked) {
@@ -117,5 +119,15 @@ const kernelconvertPolarElectricFieldTheta = gpu.createKernel(e.convertPolarElec
 
 const kernelRenderR = gpuCanvas.createKernel(e.renderRGpu).setOutput([height, width]).setGraphical(true)
 const kernelRender0 = gpuCanvas.createKernel(e.render0Gpu).setOutput([height, width]).setGraphical(true)
+
+let timer = ''
+window.onresize = function () {
+  if (timer) {
+    clearTimeout(timer)
+  }
+  timer = setTimeout(function(){
+    console.log(window.innerWidth, window.innerHeight)
+  }, 200)
+};
 
 simulate()

@@ -16,30 +16,23 @@ function tri2 (ctx) {
   ctx.miterLimit = 10
   ctx.lineTo(1, 4)
 }
-export function renderTest (x, y, ctx, i) {
-  ctx.save()
-  ctx.translate(x, y)
-  ctx.rotate(x / Math.sqrt(y) * i / 100)
-  tri(ctx)
-  ctx.restore()
-}
 
-export function clear (ctx) {
-  ctx.clearRect(0, 0, 300, 300)
+export function clear (w, h, ctx) {
+  ctx.clearRect(0, 0, 2 * w, 2 * h)
 }
 
 export function Render (w, h, arrayR, arrayTheta, ctx) {
   ctx.lineWidth = 1
-  ctx.strokeStyle = '#FFF701'
   const frequency = 14
-  for (let i = 0; i < w; i += frequency) {
-    for (let j = 0; j < h; j += frequency) {
+  for (let i = 0; i < w ; i += frequency) {
+    for (let j = 0; j < h ; j += frequency) {
       let scale = arrayR[j][i] / 2000000
-      if (scale > 3) { scale = 3 }
+      if (scale > 6) { scale = 6 }
       ctx.beginPath()
-      ctx.strokeStyle = `rgb(${Math.floor(scale * 85)}, 0, ${255 - Math.floor(scale * 85)})`
+      const color = Math.floor(scale * 43)
+      ctx.strokeStyle = `rgb(${color}, 0, ${256 - color})`
       ctx.save()
-      ctx.translate(i, h - j)
+      ctx.translate(2 * i, 2 * (h - j))
       ctx.rotate(Math.PI - arrayTheta[j][i])
       ctx.scale(scale, 1)
       tri(ctx)
@@ -57,24 +50,27 @@ export function RenderCircle (h, c, ctx) {
       ctx.fillStyle = '#2196E2'
     }
     ctx.beginPath()
-    ctx.arc(c.x[i], h - c.y[i], 15 * Math.abs(c.q[i]), 0, 2 * Math.PI, false)
+    ctx.arc(2 * c.x[i], 2 * (h - c.y[i]), 15 * Math.abs(c.q[i]), 0, 2 * Math.PI, false)
     ctx.fill()
   }
 }
 
 export function RenderForce (h, c, ctx) {
   ctx.lineWidth = 3
-  ctx.beginPath()
-  ctx.strokeStyle = '#FF8A00'
+  // ctx.strokeStyle = '#FF8A00'
   for (let i = 0; i < c.l; i++) {
     let scale = c.fr[i] / 100000
     if (scale > 20) { scale = 20 }
+    ctx.beginPath()
+    const color = Math.floor(scale * 13)
+    const color2 = Math.floor(scale * 3)
+    ctx.strokeStyle = `rgb(${color}, ${256 - color2}, 0)`
     ctx.save()
-    ctx.translate(c.x[i], h - c.y[i])
+    ctx.translate(2 * c.x[i], 2 * (h - c.y[i]))
     ctx.rotate(Math.PI - c.ftheta[i])
     ctx.scale(scale, 1)
     tri2(ctx)
     ctx.restore()
+    ctx.stroke()
   }
-  ctx.stroke()
 }

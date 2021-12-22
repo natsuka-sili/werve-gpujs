@@ -96,7 +96,8 @@ export class ElectricField {
     const x = this.thread.x
     const y = this.thread.y
     // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
-    const color = 1 - array[y][x] / 8987551
+    // const color = 1.1 - array[y][x] / 8987551
+    const color = 1 - array[y][x] / 20000000
     this.color(color, color, color, 1)
   }
 

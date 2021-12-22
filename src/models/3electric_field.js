@@ -109,4 +109,12 @@ export class ElectricField {
   renderRKernel (kernel) {
     kernel(this.electric_field_r)
   }
+
+  render0Gpu = function () {
+    this.color(0, 0, 0, 1)
+  }
+
+  render0Kernel (kernel) {
+    kernel()
+  }
 };

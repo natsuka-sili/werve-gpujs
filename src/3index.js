@@ -1,8 +1,8 @@
 import { GPU } from 'gpu.js'
-// import './style.css'
+import './style.css'
 import { Charge } from './models/3charge.js'
 import { ElectricField } from './models/3electric_field.js'
-import { Render } from './models/3canvas_2d.js'
+import { clear, Render, RenderCircle } from './models/3canvas_2d.js'
 
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()
@@ -26,6 +26,24 @@ simulation.addEventListener('change', () => {
   } else {
     document.getElementById('simulationL').innerText = 'start'
     cancelAnimationFrame(callback)
+  }
+})
+
+const render1 = document.getElementById('render1')
+render1.addEventListener('change', () => {
+  if (render1.checked === true) {
+    document.getElementById('render1L').innerText = '輝度:off'
+  } else {
+    document.getElementById('render1L').innerText = '輝度:on'
+  }
+})
+
+const render2 = document.getElementById('render2')
+render2.addEventListener('change', () => {
+  if (render2.checked === true) {
+    document.getElementById('render2L').innerText = '矢印:off'
+  } else {
+    document.getElementById('render2L').innerText = '矢印:on'
   }
 })
 
@@ -54,18 +72,33 @@ function canvasClick (a) {
     c.setElectricCharge([canvasX, height - canvasY, Number(inputElem.value)])
   }
 }
-canvas.addEventListener('click', canvasClick, false)
+test.addEventListener('click', canvasClick, false)
 
 let callback
+let render3 = false
+let render4 = false
 function simulate () {
   if (c.l === 0) {
     callback = requestAnimationFrame(simulate)
   } else {
     e.superposeElectricFieldKernel(kernelSuperposeElectricFieldFirst, kernelSuperposeElectricField, c)
     e.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
-    e.renderRKernel(kernelRenderR)
-
-    Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
+    if (render1.checked === true){
+      e.renderRKernel(kernelRenderR)
+      render3 = false
+    } else if (render3 === false) {
+      e.render0Kernel(kernelRender0)
+      render3 = true
+    }
+    if (render2.checked === true){
+      clear(ctx)
+      Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
+      RenderCircle(height, c, ctx)
+      render4 = false
+    } else if (render4 === false) {
+      clear(ctx)
+      render4 = true
+    }
 
     c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
     c.calcPositions(width, height)
@@ -89,6 +122,7 @@ const kernelconvertPolarElectricFieldTheta = gpu.createKernel(e.convertPolarElec
 // をするとcontextは定義されるがgpuが使えない
 
 const kernelRenderR = gpuCanvas.createKernel(e.renderRGpu).setOutput([height, width]).setGraphical(true)
+const kernelRender0 = gpuCanvas.createKernel(e.render0Gpu).setOutput([height, width]).setGraphical(true)
 
 // ここで
 // const context = canvas.getContext('2d')

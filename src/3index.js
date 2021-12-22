@@ -2,7 +2,7 @@ import { GPU } from 'gpu.js'
 import './style.css'
 import { Charge } from './models/3charge.js'
 import { ElectricField } from './models/3electric_field.js'
-import { clear, Render, RenderCircle } from './models/3canvas_2d.js'
+import { clear, Render, RenderCircle, RenderForce } from './models/3canvas_2d.js'
 
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()
@@ -83,6 +83,8 @@ function simulate () {
   } else {
     e.superposeElectricFieldKernel(kernelSuperposeElectricFieldFirst, kernelSuperposeElectricField, c)
     e.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
+    c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
+    
     if (render1.checked === true){
       e.renderRKernel(kernelRenderR)
       render3 = false
@@ -99,8 +101,8 @@ function simulate () {
       clear(ctx)
       render4 = true
     }
-
-    c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
+    RenderForce(height, c, ctx)
+    
     c.calcPositions(width, height)
 
     callback = requestAnimationFrame(simulate)

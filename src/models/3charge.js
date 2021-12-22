@@ -6,6 +6,8 @@ export class Charge {
     this.vy = []
     this.fx = []
     this.fy = []
+    this.fr = []
+    this.ftheta = []
     this.q = []
     this.l = 0
   }
@@ -29,7 +31,12 @@ export class Charge {
     for (let i = 0; i < this.l; i++) {
       this.fx[i] = q[i] * electricFieldX[y[i]][x[i]]
       this.fy[i] = q[i] * electricFieldY[y[i]][x[i]]
+      const fx = this.fx[i]
+      const fy = this.fy[i]
+      this.fr[i] = Math.sqrt(fx * fx + fy * fy)
+      this.ftheta[i] = Math.atan2(fy, fx)
     }
+    console.log(this.fr, this.ftheta)
     return this
   }
 

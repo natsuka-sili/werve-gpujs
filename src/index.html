@@ -8,20 +8,19 @@
   
   <body>
     <input type="checkbox" id="simulation" checked>
-    <label id="simulationL" for="simulation">stop</label>
-
+    <label id="simulationL" for="simulation">simulate</label>
     <input type="checkbox" id="render1" checked>
-    <label id="render1L" for="render1">輝度:off</label>
+    <label id="render1L" for="render1">norm</label>
     <input type="checkbox" id="render2" checked>
-    <label id="render2L" for="render2">矢印:off</label>
+    <label id="render2L" for="render2">vector</label>
+    <input type="checkbox" id="render5" checked>
+    <label id="render5L" for="render5">force</label>
 
     <input type="range" id="example" min="-3" max="3" step="0.1" value="1">
     <span id="current-value"></span>
     
-    <br>
-
     <div class="canvas-wrap">
-      <canvas class="canvas" id="canvas"></canvas>
+    <canvas class="canvas" id="canvas"></canvas>
     <canvas class="canvas" id="test_arrow"></canvas>
     </div>
     <script src="main.js"></script>

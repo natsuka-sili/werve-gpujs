@@ -20,32 +20,38 @@ test.height = height
 const simulation = document.getElementById('simulation')
 simulation.addEventListener('change', () => {
   if (simulation.checked === true) {
-    document.getElementById('simulationL').innerText = 'stop'
+    // document.getElementById('simulationL').innerText = 'stop'
     cancelAnimationFrame(callback)
     simulate()
   } else {
-    document.getElementById('simulationL').innerText = 'start'
+    // document.getElementById('simulationL').innerText = 'start'
     cancelAnimationFrame(callback)
   }
 })
 
 const render1 = document.getElementById('render1')
+/*
 render1.addEventListener('change', () => {
   if (render1.checked === true) {
-    document.getElementById('render1L').innerText = '輝度:off'
+    document.getElementById('render1L').innerText = 'norm:off'
   } else {
-    document.getElementById('render1L').innerText = '輝度:on'
+    document.getElementById('render1L').innerText = 'norm:on'
   }
 })
+*/
 
 const render2 = document.getElementById('render2')
+/*
 render2.addEventListener('change', () => {
   if (render2.checked === true) {
-    document.getElementById('render2L').innerText = '矢印:off'
+    document.getElementById('render2L').innerText = 'vector:off'
   } else {
-    document.getElementById('render2L').innerText = '矢印:on'
+    document.getElementById('render2L').innerText = 'vector:on'
   }
 })
+*/
+
+const render5 = document.getElementById('render5')
 
 const inputElem = document.getElementById('example')
 const currentValueElem = document.getElementById('current-value')
@@ -77,6 +83,7 @@ test.addEventListener('click', canvasClick, false)
 let callback
 let render3 = false
 let render4 = false
+let render6 = false
 function simulate () {
   if (c.l === 0) {
     callback = requestAnimationFrame(simulate)
@@ -92,16 +99,24 @@ function simulate () {
       e.render0Kernel(kernelRender0)
       render3 = true
     }
+
     if (render2.checked === true){
       clear(ctx)
       Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
       RenderCircle(height, c, ctx)
       render4 = false
-    } else if (render4 === false) {
+      if (render5.checked === true){
+        RenderForce(height, c, ctx)
+        render4 = false
+      }
+    } else if (render5.checked === true) {
+      clear(ctx)
+      RenderForce(height, c, ctx)
+      render4 = false
+    } else {
       clear(ctx)
       render4 = true
     }
-    RenderForce(height, c, ctx)
     
     c.calcPositions(width, height)
 

@@ -100,7 +100,7 @@ export class ElectricField {
     const x = this.thread.x
     const y = this.thread.y
     // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
-    const color = array[y][x] / 8987551
+    const color = 1 - array[y][x] / 8987551
     this.color(color, color, color, 1)
     // const color = array[y][x] / 1.5
     // this.color(color, 0, -color, 1)
@@ -111,7 +111,7 @@ export class ElectricField {
   }
 
   render0Gpu = function () {
-    this.color(0, 0, 0, 1)
+    this.color(1, 1, 1, 1)
   }
 
   render0Kernel (kernel) {

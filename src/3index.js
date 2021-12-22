@@ -82,8 +82,7 @@ test.addEventListener('click', canvasClick, false)
 
 let callback
 let render3 = false
-let render4 = false
-let render6 = false
+// let render4 = false
 function simulate () {
   if (c.l === 0) {
     callback = requestAnimationFrame(simulate)
@@ -91,8 +90,8 @@ function simulate () {
     e.superposeElectricFieldKernel(kernelSuperposeElectricFieldFirst, kernelSuperposeElectricField, c)
     e.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
     c.calcCoulombForce(e.electric_field_x, e.electric_field_y)
-    
-    if (render1.checked === true){
+
+    if (render1.checked === true) {
       e.renderRKernel(kernelRenderR)
       render3 = false
     } else if (render3 === false) {
@@ -100,24 +99,25 @@ function simulate () {
       render3 = true
     }
 
-    if (render2.checked === true){
+    if (render2.checked === true) {
       clear(ctx)
       Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
       RenderCircle(height, c, ctx)
-      render4 = false
-      if (render5.checked === true){
+      // render4 = false
+      if (render5.checked === true) {
         RenderForce(height, c, ctx)
-        render4 = false
+        // render4 = false
       }
     } else if (render5.checked === true) {
       clear(ctx)
+      RenderCircle(height, c, ctx)
       RenderForce(height, c, ctx)
-      render4 = false
+      // render4 = false
     } else {
       clear(ctx)
-      render4 = true
+      // render4 = true
     }
-    
+
     c.calcPositions(width, height)
 
     callback = requestAnimationFrame(simulate)

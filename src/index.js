@@ -19,7 +19,7 @@ test.height = 2 * height
 // test.width = width
 // test.height = height
 
-let radio = 0
+let radio = '1'
 document.getElementsByName('radio').forEach(
   r => r.addEventListener('change',
   // e => console.log('change:' + e.target.value)
@@ -65,9 +65,16 @@ function canvasClick (a) {
   const scaleHeight = canvas.clientHeight / height
   const canvasX = Math.floor(viewX / scaleWidth)
   const canvasY = Math.floor(viewY / scaleHeight)
-  if (Number(inputElem.value) !== 0) {
+  if (Number(inputElem.value) !== 0 && radio === '1') {
     c.setCharge([canvasX, height - canvasY, Number(inputElem.value)])
   }
+  if (radio === '2') {
+    c.deleteCharge(canvasX, height - canvasY)
+  }
+  if (radio === '3') {
+    c.fixCharge(canvasX, height - canvasY)
+  }
+  console.log(c.fix)
 }
 test.addEventListener('click', canvasClick, false)
 
@@ -75,6 +82,8 @@ let callback
 let render3 = true
 function simulate () {
   if (c.l === 0) {
+    e.render0Kernel(kernelRender0)
+    clear(width, height, ctx)
     callback = requestAnimationFrame(simulate)
   } else {
     e.superposeElectricFieldKernel(kernelSuperposeElectricFieldFirst, kernelSuperposeElectricField, c)
@@ -109,8 +118,6 @@ function simulate () {
     if (time.checked) {
       c.calcPositions(width, height)
     }
-
-    console.log(radio)
 
     callback = requestAnimationFrame(simulate)
   }

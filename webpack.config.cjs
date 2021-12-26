@@ -31,5 +31,12 @@ module.exports = {
         ]
       }
     ]
+  },
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, './dist')
+    },
+    host: '0.0.0.0',
+    open: true
   }
 }

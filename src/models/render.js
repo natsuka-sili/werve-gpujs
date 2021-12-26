@@ -24,8 +24,8 @@ export function clear (w, h, ctx) {
 export function Render (w, h, arrayR, arrayTheta, ctx) {
   ctx.lineWidth = 1
   const frequency = 14
-  for (let i = 0; i < w ; i += frequency) {
-    for (let j = 0; j < h ; j += frequency) {
+  for (let i = 0; i < w; i += frequency) {
+    for (let j = 0; j < h; j += frequency) {
       let scale = arrayR[j][i] / 2000000
       if (scale > 6) { scale = 6 }
       ctx.beginPath()
@@ -50,7 +50,7 @@ export function RenderCircle (h, c, ctx) {
       ctx.fillStyle = '#2196E2'
     }
     ctx.beginPath()
-    ctx.arc(2 * c.x[i], 2 * (h - c.y[i]), 15 * Math.abs(c.q[i]), 0, 2 * Math.PI, false)
+    ctx.arc(2 * c.x[i], 2 * (h - c.y[i]), 22 * (1 + Math.abs(c.q[i])), 0, 2 * Math.PI, false)
     ctx.fill()
   }
 }

@@ -19,6 +19,13 @@ test.height = 2 * height
 // test.width = width
 // test.height = height
 
+let radio = 0
+document.getElementsByName('radio').forEach(
+  r => r.addEventListener('change',
+  // e => console.log('change:' + e.target.value)
+    e => (radio = e.target.value))
+)
+
 const simulation = document.getElementById('simulation')
 simulation.addEventListener('change', () => {
   if (simulation.checked) {
@@ -40,7 +47,7 @@ const render5 = document.getElementById('render5')
 const inputElem = document.getElementById('example')
 const currentValueElem = document.getElementById('current-value')
 const setCurrentValue = (val) => {
-  currentValueElem.innerText = val
+  currentValueElem.innerText = Math.round(val * 10 / 3) // 無理やり-10~10にしている
 }
 const rangeOnChange = (e) => {
   setCurrentValue(e.target.value)
@@ -59,7 +66,7 @@ function canvasClick (a) {
   const canvasX = Math.floor(viewX / scaleWidth)
   const canvasY = Math.floor(viewY / scaleHeight)
   if (Number(inputElem.value) !== 0) {
-    c.setElectricCharge([canvasX, height - canvasY, Number(inputElem.value)])
+    c.setCharge([canvasX, height - canvasY, Number(inputElem.value)])
   }
 }
 test.addEventListener('click', canvasClick, false)
@@ -103,6 +110,8 @@ function simulate () {
       c.calcPositions(width, height)
     }
 
+    console.log(radio)
+
     callback = requestAnimationFrame(simulate)
   }
 }
@@ -119,15 +128,5 @@ const kernelconvertPolarElectricFieldTheta = gpu.createKernel(e.convertPolarElec
 
 const kernelRenderR = gpuCanvas.createKernel(e.renderRGpu).setOutput([height, width]).setGraphical(true)
 const kernelRender0 = gpuCanvas.createKernel(e.render0Gpu).setOutput([height, width]).setGraphical(true)
-
-let timer = ''
-window.onresize = function () {
-  if (timer) {
-    clearTimeout(timer)
-  }
-  timer = setTimeout(function(){
-    console.log(window.innerWidth, window.innerHeight)
-  }, 200)
-};
 
 simulate()

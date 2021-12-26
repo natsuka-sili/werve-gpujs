@@ -6,7 +6,9 @@
   "scripts": {
     "lint": "eslint src",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "build": "webpack --mode development"
+    "build": "webpack --mode development",
+    "watch": "webpack --watch",
+    "start": "webpack serve"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -35,6 +37,7 @@
     "global": "^4.4.0",
     "gpu.js": "^2.11.4",
     "style-loader": "^3.3.1",
+    "webpack-dev-server": "^4.7.1",
     "yarn": "^1.22.17"
   }
 }

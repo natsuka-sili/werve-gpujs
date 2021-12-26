@@ -11,6 +11,7 @@ export class Charge {
     this.q = []
     this.r = []
     this.fix = []
+    this.move = []
     this.l = 0
   }
 
@@ -24,6 +25,7 @@ export class Charge {
     this.q.push(array[2])
     this.r.push(11 * (1 + Math.abs(array[2])))
     this.fix.push(false)
+    this.move.push(false)
     this.l++
     return this
   }
@@ -43,6 +45,7 @@ export class Charge {
         this.q.splice(i, 1)
         this.r.splice(i, 1)
         this.fix.splice(i, 1)
+        this.move.splice(i, 1)
         this.l--
         return this
       }
@@ -61,6 +64,23 @@ export class Charge {
     }
   }
 
+  moveBeginCharge (pointX, pointY) {
+    const x = this.x
+    const y = this.y
+    const r = this.r
+    for (let i = 0; i < this.l; i++) {
+      if (pointX >= x[i] - r[i] && pointX <= x[i] + r[i] && pointY >= y[i] - r[i] && pointY <= y[i] + r[i]) {
+        this.move[i] = true
+      }
+    }
+    return this
+  }
+
+  moveEndCharge () {
+    this.move = this.move.map(() => false)
+    return this
+  }
+
   calcCoulombForce (electricFieldX, electricFieldY) {
     const q = this.q
     const x = this.x
@@ -77,7 +97,7 @@ export class Charge {
     return this
   }
 
-  calcPositions (w, h) {
+  calcPositions (w, h, pointX, pointY) {
     const x = this.x
     const y = this.y
     const vx = this.vx
@@ -86,9 +106,15 @@ export class Charge {
     const fy = this.fy
     const r = this.r
     const fix = this.fix
+    const move = this.move
     const l = this.l
     const CoefficientOfRestitution = 0.2
     for (let i = 0; i < l; i++) {
+      //
+      if (move[i] === true) {
+        console.log(pointX, pointY)
+      }
+
       const t = 1 / 10000
       const m1 = r[i] / 1000
 
@@ -133,6 +159,13 @@ export class Charge {
             vy[j] = (CoefficientOfRestitution * m1 * (vy1 - vy2) + m1 * vy1 + m2 * vy2) / (m1 + m2)
           }
         }
+      }
+
+      if (move[i] === true) {
+        vx[i] = 0
+        x[i] = pointX
+        vy[i] = 0
+        y[i] = pointY
       }
 
       if (x[i] >= w - 1) {

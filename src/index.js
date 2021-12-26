@@ -74,9 +74,44 @@ function canvasClick (a) {
   if (radio === '3') {
     c.fixCharge(canvasX, height - canvasY)
   }
-  console.log(c.fix)
 }
 test.addEventListener('click', canvasClick, false)
+
+let mouseX
+let mouseY
+function canvasMousedown (a) {
+  const rect = a.target.getBoundingClientRect()
+  const viewX = a.clientX - rect.left
+  const viewY = a.clientY - rect.top
+  const scaleWidth = canvas.clientWidth / width
+  const scaleHeight = canvas.clientHeight / height
+  const canvasX = Math.floor(viewX / scaleWidth)
+  const canvasY = Math.floor(viewY / scaleHeight)
+  mouseX = canvasX
+  mouseY = canvasY
+  if (Number(inputElem.value) !== 0 && radio === '4') {
+    c.moveBeginCharge(canvasX, height - canvasY)
+  }
+}
+function canvasMouseup () {
+  c.moveEndCharge()
+}
+test.addEventListener('mousedown', canvasMousedown, false)
+document.addEventListener('mouseup', canvasMouseup, false)
+function canvasMousemove (a) {
+  if (Number(inputElem.value) !== 0 && radio === '4' && c.move.includes(true) === true) {
+    const rect = a.target.getBoundingClientRect()
+    const viewX = a.clientX - rect.left
+    const viewY = a.clientY - rect.top
+    const scaleWidth = canvas.clientWidth / width
+    const scaleHeight = canvas.clientHeight / height
+    const canvasX = Math.floor(viewX / scaleWidth)
+    const canvasY = Math.floor(viewY / scaleHeight)
+    mouseX = canvasX
+    mouseY = canvasY
+  }
+}
+test.addEventListener('mousemove', canvasMousemove, false)
 
 let callback
 let render3 = true
@@ -116,7 +151,7 @@ function simulate () {
     }
 
     if (time.checked) {
-      c.calcPositions(width, height)
+      c.calcPositions(width, height, mouseX, height - mouseY)
     }
 
     callback = requestAnimationFrame(simulate)

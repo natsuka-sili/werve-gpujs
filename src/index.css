@@ -1,5 +1,5 @@
 .canvas-wrap{
-    width: 600px;
+    width: 90vh;
     max-width: 100%;
     position: relative;
     padding: 0;
@@ -13,7 +13,7 @@
 .canvas{
     position: absolute;
     left:0;
-    top:0;
+    top:-45vh;
     border: 0;
     max-width:100%;
     box-sizing: content-box;
@@ -21,9 +21,17 @@
     margin: 0;
 }
 #canvas{
-    width: 200%;
+    width: 100%;
 }
 #test_arrow{
     width: 100%;
     /* width: 200%; */
+}
+#flex{
+    height: 90vh;
+    display: flex;
+    align-items: center;
+}
+.fbox{
+    margin: 0;
 }

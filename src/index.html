@@ -4,32 +4,37 @@
   <head>
     <meta charset="UTF-8">
     <title>verve</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
   </head>
   
   <body>
-    <input type="checkbox" id="simulation" checked>
-    <label id="simulationL" for="simulation">simulate</label>
-    <input type="checkbox" id="time" checked>
-    <label id="timeL" for="time">time</label>
-    <input type="checkbox" id="render1" checked>
-    <label id="render1L" for="render1">norm</label>
-    <input type="checkbox" id="render2" checked>
-    <label id="render2L" for="render2">vector</label>
-    <input type="checkbox" id="render5" checked>
-    <label id="render5L" for="render5">force</label>
+    <div id="flex">
+      <div class="canvas-wrap">
+        <canvas class="canvas" id="canvas"></canvas>
+        <canvas class="canvas" id="test_arrow"></canvas>
+      </div>
 
-    <label><input type="radio" name="radio" value="1" checked>install</label>
-    <label><input type="radio" name="radio" value="2">delete</label>
-    <label><input type="radio" name="radio" value="3">fix</label>
-    <label><input type="radio" name="radio" value="4">move</label>
- 
-
-    <input type="range" id="example" min="-3" max="3" step="0.3" value="0.3">
-    <span id="current-value"></span>
-    
-    <div class="canvas-wrap">
-    <canvas class="canvas" id="canvas"></canvas>
-    <canvas class="canvas" id="test_arrow"></canvas>
+      <div class="fbox">
+        <input type="checkbox" id="simulation" checked>
+        <label id="simulationL" for="simulation">simulate</label>
+        <input type="checkbox" id="time" checked>
+        <label id="timeL" for="time">time</label>
+        <br>
+        <input type="checkbox" id="render1" checked>
+        <label id="render1L" for="render1">norm</label>
+        <input type="checkbox" id="render2" checked>
+        <label id="render2L" for="render2">vector</label>
+        <input type="checkbox" id="render5" checked>
+        <label id="render5L" for="render5">force</label>
+        <br>
+        <label><input type="radio" name="radio" value="1" checked>install</label>
+        <label><input type="radio" name="radio" value="2">delete</label>
+        <label><input type="radio" name="radio" value="3">fix</label>
+        <label><input type="radio" name="radio" value="4">move</label>
+        <br>
+        <input type="range" id="example" min="-3" max="3" step="0.3" value="0.3">
+        <span id="current-value"></span>
+      </div>
     </div>
 
     <script src="main.js"></script>

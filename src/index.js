@@ -119,8 +119,9 @@ function canvasMousemove (a) {
 //
 function canvasTouchstart (a) {
   const rect = a.changedTouches[0]
-  const canvasX = Math.floor(rect.clientX / 2) - 4
-  const canvasY = Math.floor(rect.clientY / 2) - 16
+  console.log(rect, a.touches[0], a.targetTouches[0])
+  const canvasX = Math.floor(-22.7 + (17.309782028198242 + rect.clientX / 2) * 1.2)// - 4
+  const canvasY = Math.floor(-26.7 + (19.97282600402832 + rect.clientY / 2) * 1.2)// - 16
   mouseX = canvasX
   mouseY = canvasY
   if (Number(inputElem.value) !== 0 && radio === '4') {
@@ -134,8 +135,9 @@ function canvasTouchmove (a) {
   if (Number(inputElem.value) !== 0 && radio === '4' && c.move.includes(true) === true) {
     a.preventDefault()
     const rect = a.changedTouches[0]
-    const canvasX = Math.floor(rect.clientX / 2) - 4
-    const canvasY = Math.floor(rect.clientY / 2) - 16
+    // console.log(rect)
+    const canvasX = Math.floor(-22.7 + (17.309782028198242 + rect.clientX / 2) * 1.2)// - 4
+    const canvasY = Math.floor(-26.7 + (19.97282600402832 + rect.clientY / 2) * 1.2)// - 16
     mouseX = canvasX
     mouseY = canvasY
   }

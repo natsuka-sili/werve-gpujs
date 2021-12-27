@@ -19,6 +19,7 @@ test.height = 2 * height
 // test.width = width
 // test.height = height
 
+/*
 function isSmartPhone () {
   if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
     return true
@@ -26,6 +27,7 @@ function isSmartPhone () {
     return false
   }
 }
+*/
 
 let radio = '1'
 document.getElementsByName('radio').forEach(
@@ -118,10 +120,14 @@ function canvasMousemove (a) {
 }
 //
 function canvasTouchstart (a) {
-  const rect = a.changedTouches[0]
-  console.log(rect, a.touches[0], a.targetTouches[0])
-  const canvasX = Math.floor(-22.7 + (17.309782028198242 + rect.clientX / 2) * 1.2)// - 4
-  const canvasY = Math.floor(-26.7 + (19.97282600402832 + rect.clientY / 2) * 1.2)// - 16
+  const touch = a.changedTouches[0]
+  const rect = touch.target.getBoundingClientRect()
+  const viewX = touch.clientX - rect.left
+  const viewY = touch.clientY - rect.top
+  const scaleWidth = canvas.clientWidth / width
+  const scaleHeight = canvas.clientHeight / height
+  const canvasX = Math.floor(viewX / scaleWidth)
+  const canvasY = Math.floor(viewY / scaleHeight)
   mouseX = canvasX
   mouseY = canvasY
   if (Number(inputElem.value) !== 0 && radio === '4') {
@@ -133,15 +139,19 @@ function canvasTouchend () {
 }
 function canvasTouchmove (a) {
   if (Number(inputElem.value) !== 0 && radio === '4' && c.move.includes(true) === true) {
-    a.preventDefault()
-    const rect = a.changedTouches[0]
-    // console.log(rect)
-    const canvasX = Math.floor(-22.7 + (17.309782028198242 + rect.clientX / 2) * 1.2)// - 4
-    const canvasY = Math.floor(-26.7 + (19.97282600402832 + rect.clientY / 2) * 1.2)// - 16
+    const touch = a.changedTouches[0]
+    const rect = touch.target.getBoundingClientRect()
+    const viewX = touch.clientX - rect.left
+    const viewY = touch.clientY - rect.top
+    const scaleWidth = canvas.clientWidth / width
+    const scaleHeight = canvas.clientHeight / height
+    const canvasX = Math.floor(viewX / scaleWidth)
+    const canvasY = Math.floor(viewY / scaleHeight)
     mouseX = canvasX
     mouseY = canvasY
   }
 }
+/*
 if (isSmartPhone()) {
   test.addEventListener('touchstart', canvasTouchstart, false)
   test.addEventListener('touchmove', canvasTouchmove, { passive: false })
@@ -151,6 +161,14 @@ if (isSmartPhone()) {
   test.addEventListener('mousemove', canvasMousemove, false)
   document.addEventListener('mouseup', canvasMouseup, false)
 }
+*/
+
+test.addEventListener('touchstart', canvasTouchstart, false)
+test.addEventListener('touchmove', canvasTouchmove, { passive: false })
+document.addEventListener('touchend', canvasTouchend, false)
+test.addEventListener('mousedown', canvasMousedown, false)
+test.addEventListener('mousemove', canvasMousemove, false)
+document.addEventListener('mouseup', canvasMouseup, false)
 
 let callback
 let render3 = true

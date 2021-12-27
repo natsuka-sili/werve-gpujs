@@ -25,7 +25,6 @@
 }
 #test_arrow{
     width: 100%;
-    /* width: 200%; */
 }
 #flex{
     height: 90vh;
@@ -34,4 +33,8 @@
 }
 .fbox{
     margin: 0;
+}
+body{
+    margin-top: 5vh;
+    margin-bottom: 5vh;
 }

@@ -110,11 +110,6 @@ export class Charge {
     const l = this.l
     const CoefficientOfRestitution = 0.2
     for (let i = 0; i < l; i++) {
-      //
-      if (move[i] === true) {
-        console.log(pointX, pointY)
-      }
-
       const t = 1 / 10000
       const m1 = r[i] / 1000
 

@@ -19,10 +19,17 @@ test.height = 2 * height
 // test.width = width
 // test.height = height
 
+function isSmartPhone () {
+  if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
+    return true
+  } else {
+    return false
+  }
+}
+
 let radio = '1'
 document.getElementsByName('radio').forEach(
   r => r.addEventListener('change',
-  // e => console.log('change:' + e.target.value)
     e => (radio = e.target.value))
 )
 
@@ -96,8 +103,6 @@ function canvasMousedown (a) {
 function canvasMouseup () {
   c.moveEndCharge()
 }
-test.addEventListener('mousedown', canvasMousedown, false)
-document.addEventListener('mouseup', canvasMouseup, false)
 function canvasMousemove (a) {
   if (Number(inputElem.value) !== 0 && radio === '4' && c.move.includes(true) === true) {
     const rect = a.target.getBoundingClientRect()
@@ -111,7 +116,39 @@ function canvasMousemove (a) {
     mouseY = canvasY
   }
 }
-test.addEventListener('mousemove', canvasMousemove, false)
+//
+function canvasTouchstart (a) {
+  const rect = a.changedTouches[0]
+  const canvasX = Math.floor(rect.clientX / 2) - 4
+  const canvasY = Math.floor(rect.clientY / 2) - 16
+  mouseX = canvasX
+  mouseY = canvasY
+  if (Number(inputElem.value) !== 0 && radio === '4') {
+    c.moveBeginCharge(canvasX, height - canvasY)
+  }
+}
+function canvasTouchend () {
+  c.moveEndCharge()
+}
+function canvasTouchmove (a) {
+  if (Number(inputElem.value) !== 0 && radio === '4' && c.move.includes(true) === true) {
+    a.preventDefault()
+    const rect = a.changedTouches[0]
+    const canvasX = Math.floor(rect.clientX / 2) - 4
+    const canvasY = Math.floor(rect.clientY / 2) - 16
+    mouseX = canvasX
+    mouseY = canvasY
+  }
+}
+if (isSmartPhone()) {
+  test.addEventListener('touchstart', canvasTouchstart, false)
+  test.addEventListener('touchmove', canvasTouchmove, { passive: false })
+  document.addEventListener('touchend', canvasTouchend, false)
+} else {
+  test.addEventListener('mousedown', canvasMousedown, false)
+  test.addEventListener('mousemove', canvasMousemove, false)
+  document.addEventListener('mouseup', canvasMouseup, false)
+}
 
 let callback
 let render3 = true

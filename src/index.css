@@ -1,40 +1,90 @@
-.canvas-wrap{
-    width: 90vh;
-    max-width: 100%;
-    position: relative;
-    padding: 0;
-    box-sizing: content-box;
+@media (orientation: landscape){
+    .canvas-wrap{
+        width: 90vh;
+        max-width: 100%;
+        position: relative;
+        padding: 0;
+        box-sizing: content-box;
+    }
+    .canvas_warp:before{
+        content:"";
+        display: block;
+        padding-top: 50%;
+    }
+    .canvas{
+        position: absolute;
+        left:0;
+        top:-45vh;
+        border: 0;
+        max-width:100%;
+        box-sizing: content-box;
+        padding: 0;
+        margin: 0;
+    }
+    #canvas{
+        width: 100%;
+    }
+    #test_arrow{
+        width: 100%;
+    }
+    #flex{
+        height: 90vh;
+        display: flex;
+        align-items: center;
+    }
+    .fbox{
+        margin: 0;
+    }
+    body{
+        margin-top: 5vh;
+        margin-bottom: 5vh;
+    }
+    .css-br::after {
+        content: "\A" ;
+        white-space: pre;
+    }
 }
-.canvas_warp:before{
-    content:"";
-    display: block;
-    padding-top: 50%;
-}
-.canvas{
-    position: absolute;
-    left:0;
-    top:-45vh;
-    border: 0;
-    max-width:100%;
-    box-sizing: content-box;
-    padding: 0;
-    margin: 0;
-}
-#canvas{
-    width: 100%;
-}
-#test_arrow{
-    width: 100%;
-}
-#flex{
-    height: 90vh;
-    display: flex;
-    align-items: center;
-}
-.fbox{
-    margin: 0;
-}
-body{
-    margin-top: 5vh;
-    margin-bottom: 5vh;
+
+@media (orientation: portrait){
+    .canvas-wrap{
+        height: 90vw;
+        max-height: 100%;
+        position: relative;
+        padding: 0;
+        box-sizing: content-box;
+    }
+    .canvas_warp:before{
+        content:"";
+        display: block;
+        padding-left: 50%;
+    }
+    .canvas{
+        position: absolute;
+        left:0;
+        top:0;
+        border: 0;
+        max-height:100%;
+        box-sizing: content-box;
+        padding: 0;
+        margin: 0;
+    }
+    #canvas{
+        width: 100%;
+    }
+    #test_arrow{
+        width: 100%;
+    }
+    #flex{
+        width: 90vw;
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+    }
+    .fbox{
+        margin: 0;
+    }
+    body{
+        margin-left: 5vw;
+        margin-right: 5vw;
+    }
 }

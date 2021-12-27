@@ -16,18 +16,9 @@ const test = document.getElementById('test_arrow')
 const ctx = test.getContext('2d')
 test.width = 2 * width
 test.height = 2 * height
-// test.width = width
-// test.height = height
 
-/*
-function isSmartPhone () {
-  if (navigator.userAgent.match(/iPhone|Android.+Mobile/)) {
-    return true
-  } else {
-    return false
-  }
-}
-*/
+canvas.style.border = '1px solid'
+test.style.border = '1px solid'
 
 let radio = '1'
 document.getElementsByName('radio').forEach(
@@ -138,6 +129,7 @@ function canvasTouchend () {
   c.moveEndCharge()
 }
 function canvasTouchmove (a) {
+  // a.preventDefault()
   if (Number(inputElem.value) !== 0 && radio === '4' && c.move.includes(true) === true) {
     const touch = a.changedTouches[0]
     const rect = touch.target.getBoundingClientRect()
@@ -151,20 +143,13 @@ function canvasTouchmove (a) {
     mouseY = canvasY
   }
 }
-/*
-if (isSmartPhone()) {
-  test.addEventListener('touchstart', canvasTouchstart, false)
-  test.addEventListener('touchmove', canvasTouchmove, { passive: false })
-  document.addEventListener('touchend', canvasTouchend, false)
-} else {
-  test.addEventListener('mousedown', canvasMousedown, false)
-  test.addEventListener('mousemove', canvasMousemove, false)
-  document.addEventListener('mouseup', canvasMouseup, false)
-}
-*/
+
+document.addEventListener('touchmove', function (a) {
+  a.preventDefault()
+}, { passive: false })
 
 test.addEventListener('touchstart', canvasTouchstart, false)
-test.addEventListener('touchmove', canvasTouchmove, { passive: false })
+test.addEventListener('touchmove', canvasTouchmove, false)
 document.addEventListener('touchend', canvasTouchend, false)
 test.addEventListener('mousedown', canvasMousedown, false)
 test.addEventListener('mousemove', canvasMousemove, false)

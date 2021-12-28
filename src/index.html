@@ -15,25 +15,35 @@
       </div>
 
       <div class="fbox">
-        <input type="checkbox" id="simulation" checked>
-        <label id="simulationL" for="simulation">simulate</label>
-        <input type="checkbox" id="time" checked>
-        <label class="css-br" id="timeL" for="time">time</label>
+        <!--<input type="checkbox" id="simulation" checked>-->
+        <!--<label id="simulationL" for="simulation">simulate</label>-->
+        <input class="radio-inline__input2" type="checkbox" id="time" checked>
+        <label class="radio-inline__label2" id="timeL" for="time">time</label>
         <!--<br>-->
-        <input type="checkbox" id="render1" checked>
-        <label id="render1L" for="render1">norm</label>
-        <input type="checkbox" id="render2" checked>
-        <label id="render2L" for="render2">vector</label>
-        <input type="checkbox" id="render5" checked>
-        <label id="render5L" for="render5">force</label>
+        <input class="radio-inline__input2" type="checkbox" id="render1" checked>
+        <label class="radio-inline__label2" id="render1L" for="render1">norm</label>
+        <input class="radio-inline__input2" type="checkbox" id="render2" checked>
+        <label class="radio-inline__label2" id="render2L" for="render2">vector</label>
+        <input class="radio-inline__input2" type="checkbox" id="render5" checked>
+        <label class="radio-inline__label2" id="render5L" for="render5">force</label>
         <br>
-        <label><input type="radio" name="radio" value="1" checked>install</label>
-        <label><input type="radio" name="radio" value="2">delete</label>
-        <label><input type="radio" name="radio" value="3">fix</label>
-        <label class="css-br"><input type="radio" name="radio" value="4">move</label>
+        <input class="radio-inline__input" type="radio" name="radio" value="1" id="1" checked>
+        <label class="radio-inline__label" for="1">install</label>
+        <input class="radio-inline__input" type="radio" name="radio" value="2" id="2">
+        <label class="radio-inline__label" for="2">delete</label>
+        <input class="radio-inline__input" type="radio" name="radio" value="3" id="3">
+        <label class="radio-inline__label" for="3">fix</label>
+        <input class="radio-inline__input" type="radio" name="radio" value="4" id="4">
+        <label class="css-br radio-inline__label" for="4">move</label>
         <!--<br>-->
+        <!--
         <input type="range" id="example" min="-3" max="3" step="0.3" value="0.3">
         <span id="current-value"></span>
+        -->
+        <div class="range-wrap">
+          <div class="range-value" id="rangeV"></div>
+          <input id="range" type="range" min="-3" max="3" value="0.3" step="0.3">
+        </div>
       </div>
     </div>
 

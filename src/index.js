@@ -3,7 +3,18 @@ import './index.css'
 import { Charge } from './models/charge.js'
 import { ElectricField } from './models/electric-field.js'
 import { clear, Render, RenderCircle, RenderForce } from './models/render.js'
-
+// ####################
+const range = document.getElementById('range')
+const rangeV = document.getElementById('rangeV')
+const setValue = () => {
+  const newValue = Number((range.value - range.min) * 100 / (range.max - range.min))
+  const newPosition = 10 - (newValue * 0.2)
+  rangeV.innerHTML = `<span>${range.value}</span>`
+  rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`
+}
+document.addEventListener('DOMContentLoaded', setValue)
+range.addEventListener('input', setValue)
+// ####################
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()
 const gpuCanvas = new GPU({ canvas: canvas })
@@ -26,17 +37,17 @@ document.getElementsByName('radio').forEach(
     e => (radio = e.target.value))
 )
 
-const simulation = document.getElementById('simulation')
-simulation.addEventListener('change', () => {
-  if (simulation.checked) {
-    // document.getElementById('simulationL').innerText = 'stop'
-    cancelAnimationFrame(callback)
-    simulate()
-  } else {
-    // document.getElementById('simulationL').innerText = 'start'
-    cancelAnimationFrame(callback)
-  }
-})
+// const simulation = document.getElementById('simulation')
+// simulation.addEventListener('change', () => {
+//   if (simulation.checked) {
+//     // document.getElementById('simulationL').innerText = 'stop'
+//     cancelAnimationFrame(callback)
+//     simulate()
+//   } else {
+//     // document.getElementById('simulationL').innerText = 'start'
+//     cancelAnimationFrame(callback)
+//   }
+// })
 const time = document.getElementById('time')
 const render1 = document.getElementById('render1')
 
@@ -44,6 +55,8 @@ const render2 = document.getElementById('render2')
 
 const render5 = document.getElementById('render5')
 
+const inputElem = document.getElementById('range')
+/*
 const inputElem = document.getElementById('example')
 const currentValueElem = document.getElementById('current-value')
 const setCurrentValue = (val) => {
@@ -56,6 +69,7 @@ window.onload = () => {
   inputElem.addEventListener('input', rangeOnChange)
   setCurrentValue(inputElem.value)
 }
+*/
 
 function canvasClick (a) {
   const rect = a.target.getBoundingClientRect()
@@ -144,7 +158,8 @@ function canvasTouchmove (a) {
   }
 }
 
-document.addEventListener('touchmove', function (a) {
+test.addEventListener('touchmove', function (a) {
+// document.addEventListener('touchmove', function (a) {
   a.preventDefault()
 }, { passive: false })
 
@@ -155,13 +170,14 @@ test.addEventListener('mousedown', canvasMousedown, false)
 test.addEventListener('mousemove', canvasMousemove, false)
 document.addEventListener('mouseup', canvasMouseup, false)
 
-let callback
+// let callback
 let render3 = true
 function simulate () {
   if (c.l === 0) {
     e.render0Kernel(kernelRender0)
     clear(width, height, ctx)
-    callback = requestAnimationFrame(simulate)
+    // callback = requestAnimationFrame(simulate)
+    requestAnimationFrame(simulate)
   } else {
     e.superposeElectricFieldKernel(kernelSuperposeElectricFieldFirst, kernelSuperposeElectricField, c)
     e.convertPolarElectricFieldKernel(kernelconvertPolarElectricFieldR, kernelconvertPolarElectricFieldTheta)
@@ -196,7 +212,8 @@ function simulate () {
       c.calcPositions(width, height, mouseX, height - mouseY)
     }
 
-    callback = requestAnimationFrame(simulate)
+    // callback = requestAnimationFrame(simulate)
+    requestAnimationFrame(simulate)
   }
 }
 

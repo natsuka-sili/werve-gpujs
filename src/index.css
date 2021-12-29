@@ -4,6 +4,8 @@
         max-width: 100%;
         position: relative;
         padding: 0;
+        margin-left: 15vw;
+        margin-right: 1em;
         box-sizing: content-box;
     }
     .canvas_warp:before{
@@ -43,6 +45,29 @@
         content: "\A" ;
         white-space: pre;
     }
+    .range-wrap { 
+        width: 300px;
+        position: relative;
+        -webkit-transform:rotate(-90deg);
+        -moz-transform:rotate(-90deg);
+          -o-transform:rotate(-90deg);
+             transform:rotate(-90deg) translate(25%, 450%);
+    }
+
+    .range-value span{
+        width: 30px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        color: #03a9f4;
+        font-size: 24px;
+        display: block;
+    
+        -webkit-transform:rotate(90deg);
+        -moz-transform:rotate(90deg);
+          -o-transform:rotate(90deg);
+             transform:rotate(90deg) translate(-75%, 50%);
+    }
 }
 
 @media (orientation: portrait){
@@ -51,6 +76,8 @@
         max-height: 100%;
         position: relative;
         padding: 0;
+        margin-top: 1em;
+        margin-bottom: 1em;
         box-sizing: content-box;
     }
     .canvas_warp:before{
@@ -88,6 +115,21 @@
     body{
         margin-left: 5vw;
         margin-right: 5vw;
+    }
+
+    .range-value span{
+        width: 30px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        color: #03a9f4;
+        font-size: 24px;
+        display: block;
+        transform: translate(-75%, 0);
+    }
+    .range-wrap{
+        width: 300px;
+        position: relative;
     }
 }
 
@@ -138,7 +180,7 @@ body{
 /**/
 body{
 	min-height: 100vh;
-	padding: 0 10vh;
+	/*padding: 0 10vh;*/
 	margin: 0;
 	position: relative;
 	display: flex;
@@ -174,21 +216,7 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]:focus::-webkit-slider-runnable-track {
 	background: #03a9f4;
 }
-.range-wrap{
-	width: 500px;
-	position: relative;
-}
 .range-value{
 	position: absolute;
-	top: -30%;
-}
-.range-value span{
-	width: 30px;
-	height: 24px;
-	line-height: 24px;
-	text-align: center;
-	color: #03a9f4;
-	font-size: 24px;
-	display: block;
-	transform: translate(-75%, 0);
+	/*top: -30%;*/
 }

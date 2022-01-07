@@ -113,6 +113,7 @@
         max-width: 500px;
     }
     body{
+	    justify-content: center;
         margin-left: 5vw;
         margin-right: 5vw;
     }
@@ -185,7 +186,6 @@ body{
 	position: relative;
 	display: flex;
 	align-items: center;
-	justify-content: center;
 }
 input[type=range] {
 	-webkit-appearance: none;

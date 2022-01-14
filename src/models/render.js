@@ -30,7 +30,7 @@ export function Render (w, h, arrayR, arrayTheta, ctx) {
       if (scale > 6) { scale = 6 }
       ctx.beginPath()
       const color = Math.floor(scale * 43)
-      ctx.strokeStyle = `rgb(${color}, 0, ${256 - color})`
+      ctx.strokeStyle = `rgb(${color}, 20, ${256 - color})`
       ctx.save()
       ctx.translate(2 * i, 2 * (h - j))
       ctx.rotate(Math.PI - arrayTheta[j][i])
@@ -45,9 +45,9 @@ export function Render (w, h, arrayR, arrayTheta, ctx) {
 export function RenderCircle (h, c, ctx) {
   for (let i = 0; i < c.l; i++) {
     if (c.q[i] > 0) {
-      ctx.fillStyle = '#FD3A4B'
+      ctx.fillStyle = '#DE3C4B'
     } else {
-      ctx.fillStyle = '#2196E2'
+      ctx.fillStyle = '#065A82'
     }
     ctx.beginPath()
     ctx.arc(2 * c.x[i], 2 * (h - c.y[i]), 22 * (1 + Math.abs(c.q[i])), 0, 2 * Math.PI, false)
@@ -64,7 +64,7 @@ export function RenderForce (h, c, ctx) {
     ctx.beginPath()
     const color = Math.floor(scale * 13)
     const color2 = Math.floor(scale * 3)
-    ctx.strokeStyle = `rgb(${color}, ${256 - color2}, 0)`
+    ctx.strokeStyle = `rgb(${color}, ${256 - color2}, 20)`
     ctx.save()
     ctx.translate(2 * c.x[i], 2 * (h - c.y[i]))
     ctx.rotate(Math.PI - c.ftheta[i])

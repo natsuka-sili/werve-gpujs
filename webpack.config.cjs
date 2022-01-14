@@ -2,7 +2,8 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: './src/index.js',
+  // entry: './src/index.js',
+  entry: './src/test_index.js',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist')
@@ -12,7 +13,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src', 'index.html'),
+      // template: path.resolve(__dirname, 'src', 'index.html'),
+      template: path.resolve(__dirname, 'src', 'test_index.html'),
       filename: 'main.html',
       favicon: './src/images/favicon.ico'
     })
@@ -22,12 +24,15 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css/,
+        test: /\.(scss|sass|css)$/,
         use: [
           'style-loader',
           {
             loader: 'css-loader',
             options: { url: false }
+          },
+          {
+            loader: 'sass-loader'
           }
         ]
       }
@@ -37,7 +42,6 @@ module.exports = {
     static: {
       directory: path.resolve(__dirname, './dist')
     },
-    host: '0.0.0.0',
-    open: true
+    host: '0.0.0.0'
   }
 }

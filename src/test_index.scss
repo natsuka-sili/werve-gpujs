@@ -1,0 +1,116 @@
+$color1: #DE3C4B;
+$color2: #065A82;
+$color3: #482C3D;
+$color4: #FFFCF9;
+
+body{
+	background-color: $color4;
+	line-height: 300%;
+	font-family: "Hiragino Maru Gothic ProN W4";
+	font-size: 110%;
+}
+
+.canvas-wrap{
+	width: min(90vw, 90vh);
+	height: min(90vw, 90vh);
+	border-style: solid;
+	border-width: 1px;
+	border-color: $color3;
+}
+.canvas{
+	position: absolute;
+	width: min(90vw, 90vh);
+}
+
+#flex1{
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: stretch;
+	margin-top: 5vh;
+}
+
+#flex2{
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-around;
+	align-items: center;
+}
+@media (orientation: landscape){
+	#flex2{
+		width: 20vh;
+	}
+}
+@media (orientation: portrait){
+	#flex2{
+		width: min(90vw, 90vh);
+	}
+}
+/*スイッチ*/
+.check, .radio {
+    clip: rect(1px, 1px, 1px, 1px);
+    position: absolute !important;
+}
+.check-label {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all .2s;
+	color: $color1;
+}
+.radio-label {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all .2s;
+	color: $color2;
+}
+.check:checked + .check-label {
+    background: $color1;
+    color: $color4;
+}
+.check:focus + .check-label {
+    outline-color: $color1;
+    outline-offset: 3px;
+    outline-style: auto;
+    outline-width: 5px;
+}
+.radio:checked + .radio-label {
+    background: $color2;
+    color: $color4;
+}
+.radio:focus + .radio-label {
+    outline-color: $color2;
+    outline-offset: 3px;
+    outline-style: auto;
+    outline-width: 5px;
+}
+/*スライダー*/
+.range-value{
+	color: $color3;
+	text-align:center;
+	margin:0 auto;
+}
+#range{
+	-webkit-appearance: none;
+	background: $color3;
+	height: 14px;
+	border-radius: 5px
+}
+#range::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	background: $color4;
+	border-style: solid;
+	border-width: 3px;
+	border-color: $color3;
+  	width: 24px;
+  	height: 24px;
+  	border-radius: 50%;
+}
+#range::-moz-range-thumb{
+	background: $color4;
+	border-style: solid;
+	border-width: 3px;
+	border-color: $color3;
+  	width: 24px;
+  	height: 24px;
+  	border-radius: 50%;
+}

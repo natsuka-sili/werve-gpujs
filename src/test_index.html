@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>verve</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+  </head>
+  
+  <body>
+    <div id="flex1">
+      <div class="canvas-wrap">
+        <canvas class="canvas" id="canvas"></canvas>
+        <canvas class="canvas" id="canvas2"></canvas>
+      </div>
+
+      <div id="flex2">
+        <div>
+          <input class="check" type="checkbox" id="time" checked>
+          <label class="check-label" id="timeL" for="time">time</label>
+        </div>
+
+        <div>
+            <input class="check" type="checkbox" id="norm" checked>
+          <label class="check-label" for="norm">norm</label>
+        </div>
+
+        <div>
+          <input class="check" type="checkbox" id="vector" checked>
+          <label class="check-label" for="vector">vector</label>
+        </div>
+
+        <div>
+          <input class="check" type="checkbox" id="force" checked>
+          <label class="check-label" for="force">force</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="1" id="1" checked>
+          <label class="radio-label" for="1">install</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="2" id="2">
+          <label class="radio-label" for="2">delete</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="3" id="3">
+          <label class="radio-label" for="3">fix</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="4" id="4">
+          <label class="radio-label" for="4">move</label>
+        </div>
+
+        <div class="range-wrap">
+          <div class="range-value" id="rangeV"></div>
+          <input id="range" type="range" min="-3" max="3" value="1" step="0.1">
+        </div>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+
+</html>

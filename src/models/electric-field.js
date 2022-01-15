@@ -92,24 +92,31 @@ export class ElectricField {
     return this
   }
 
-  renderRGpu = function (array) {
+  renderRGpu = function (array, dark) {
     const x = this.thread.x
     const y = this.thread.y
     // 8987551792がmax(Q)=1C、min(r)=1mにおけるmax(E)
     // const color = 1.1 - array[y][x] / 8987551
-    const color = 1 - array[y][x] / 20000000
+    let color = 1 - array[y][x] / 20000000
+    if (dark === true) {
+      color = array[y][x] / 20000000
+    }
     this.color(color, color, color, 1)
   }
 
-  renderRKernel (kernel) {
-    kernel(this.electric_field_r)
+  renderRKernel (kernel, dark) {
+    kernel(this.electric_field_r, dark)
   }
 
-  render0Gpu = function () {
-    this.color(1, 1, 1, 1)
+  render0Gpu = function (dark) {
+    let color = 1
+    if (dark === true) {
+      color = 0
+    }
+    this.color(color, color, color, color)
   }
 
-  render0Kernel (kernel) {
-    kernel()
+  render0Kernel (kernel, dark) {
+    kernel(dark)
   }
 };

@@ -21,7 +21,7 @@ export function clear (w, h, ctx) {
   ctx.clearRect(0, 0, 2 * w, 2 * h)
 }
 
-export function Render (w, h, arrayR, arrayTheta, ctx) {
+export function Render (w, h, arrayR, arrayTheta, ctx, dark) {
   ctx.lineWidth = 1
   const frequency = 14
   for (let i = 0; i < w; i += frequency) {
@@ -30,7 +30,11 @@ export function Render (w, h, arrayR, arrayTheta, ctx) {
       if (scale > 6) { scale = 6 }
       ctx.beginPath()
       const color = Math.floor(scale * 43)
-      ctx.strokeStyle = `rgb(${color}, 20, ${256 - color})`
+      if (dark === true) {
+        ctx.strokeStyle = `rgb(${color}, ${300 - color}, 255)`
+      } else {
+        ctx.strokeStyle = `rgb(${color}, 20, ${300 - color})`
+      }
       ctx.save()
       ctx.translate(2 * i, 2 * (h - j))
       ctx.rotate(Math.PI - arrayTheta[j][i])
@@ -42,12 +46,20 @@ export function Render (w, h, arrayR, arrayTheta, ctx) {
   }
 }
 
-export function RenderCircle (h, c, ctx) {
+export function RenderCircle (h, c, ctx, dark) {
   for (let i = 0; i < c.l; i++) {
     if (c.q[i] > 0) {
-      ctx.fillStyle = '#DE3C4B'
+      if (dark === true) {
+        ctx.fillStyle = '#EE4266'
+      } else {
+        ctx.fillStyle = '#DC493A'
+      }
     } else {
-      ctx.fillStyle = '#065A82'
+      if (dark === true) {
+        ctx.fillStyle = '#5CC8FF'
+      } else {
+        ctx.fillStyle = '#4392F1'
+      }
     }
     ctx.beginPath()
     ctx.arc(2 * c.x[i], 2 * (h - c.y[i]), 22 * (1 + Math.abs(c.q[i])), 0, 2 * Math.PI, false)

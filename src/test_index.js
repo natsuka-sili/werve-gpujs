@@ -4,10 +4,18 @@ import { Charge } from './models/charge.js'
 import { ElectricField } from './models/electric-field.js'
 import { clear, Render, RenderCircle, RenderForce } from './models/render.js'
 // ####################
+let dark = false
+// if (window.matchMedia('(prefers-color-scheme: dark)').matches === true) {
+//   dark = true
+// } else {
+//   dark = false
+// }
+console.log(dark)
+// ####################
 // const inputElem = document.getElementById('range');
 const currentValueElem = document.getElementById('rangeV')
 const setCurrentValue = (val) => {
-  currentValueElem.innerText = val
+  currentValueElem.innerText = 'charge : ' + val
 }
 const rangeOnChange = (e) => {
   setCurrentValue(e.target.value)
@@ -16,7 +24,6 @@ window.onload = () => {
   inputElem.addEventListener('input', rangeOnChange)
   setCurrentValue(inputElem.value)
 }
-
 // ####################
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()
@@ -176,8 +183,13 @@ document.addEventListener('mouseup', canvasMouseup, false)
 // let callback
 let render3 = true
 function simulate () {
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches === true) {
+    dark = true
+  } else {
+    dark = false
+  }
   if (c.l === 0) {
-    e.render0Kernel(kernelRender0)
+    e.render0Kernel(kernelRender0, dark)
     clear(width, height, ctx)
     // callback = requestAnimationFrame(simulate)
     requestAnimationFrame(simulate)
@@ -189,23 +201,23 @@ function simulate () {
     }
 
     if (render1.checked) {
-      e.renderRKernel(kernelRenderR)
+      e.renderRKernel(kernelRenderR, dark)
       render3 = true
     } else if (render3) {
-      e.render0Kernel(kernelRender0)
+      e.render0Kernel(kernelRender0, dark)
       render3 = false
     }
 
     if (render2.checked) {
       clear(width, height, ctx)
-      Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
-      RenderCircle(height, c, ctx)
+      Render(width, height, e.electric_field_r, e.electric_field_theta, ctx, dark)
+      RenderCircle(height, c, ctx, dark)
       if (render5.checked) {
         RenderForce(height, c, ctx)
       }
     } else if (render5.checked) {
       clear(width, height, ctx)
-      RenderCircle(height, c, ctx)
+      RenderCircle(height, c, ctx, dark)
       RenderForce(height, c, ctx)
     } else {
       clear(width, height, ctx)

@@ -1,0 +1,30 @@
+<svg width="400" height="400" class="bg"
+    xmlns="http://www.w3.org/2000/svg">
+    <style>
+        @media (prefers-color-scheme: dark) {
+            rect{
+                fill: #2E2836;
+            }
+            #circle-blue{
+                fill: #5CC8FF;
+            }
+            #circle-red{
+                fill: #EE4266;
+            }
+        }
+        @media (prefers-color-scheme: light) {
+            rect{
+                fill: #ECE8EF;
+            }
+            #circle-blue{
+                fill: #4392F1;
+            }
+            #circle-red{
+                fill: #DC493A;
+            }
+        }
+    </style>
+    <rect x="0" y="0" width="400" height="400"/>
+    <circle id="circle-red" cx="290" cy="110" r="100"/>
+    <circle id="circle-blue" cx="110" cy="290" r="100"/>
+</svg>

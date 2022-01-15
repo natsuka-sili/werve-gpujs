@@ -5,44 +5,60 @@
     <meta charset="UTF-8">
     <title>verve</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
   </head>
   
   <body>
-    <div id="flex">
+    <div id="flex1">
       <div class="canvas-wrap">
         <canvas class="canvas" id="canvas"></canvas>
-        <canvas class="canvas" id="test_arrow"></canvas>
+        <canvas class="canvas" id="canvas2"></canvas>
       </div>
 
-      <div class="fbox">
-        <!--<input type="checkbox" id="simulation" checked>-->
-        <!--<label id="simulationL" for="simulation">simulate</label>-->
-        <input class="radio-inline__input2" type="checkbox" id="time" checked>
-        <label class="radio-inline__label2" id="timeL" for="time">time</label>
-        <!--<br>-->
-        <input class="radio-inline__input2" type="checkbox" id="render1" checked>
-        <label class="radio-inline__label2" id="render1L" for="render1">norm</label>
-        <input class="radio-inline__input2" type="checkbox" id="render2" checked>
-        <label class="radio-inline__label2" id="render2L" for="render2">vector</label>
-        <input class="radio-inline__input2" type="checkbox" id="render5" checked>
-        <label class="radio-inline__label2" id="render5L" for="render5">force</label>
-        <br>
-        <input class="radio-inline__input" type="radio" name="radio" value="1" id="1" checked>
-        <label class="radio-inline__label" for="1">install</label>
-        <input class="radio-inline__input" type="radio" name="radio" value="2" id="2">
-        <label class="radio-inline__label" for="2">delete</label>
-        <input class="radio-inline__input" type="radio" name="radio" value="3" id="3">
-        <label class="radio-inline__label" for="3">fix</label>
-        <input class="radio-inline__input" type="radio" name="radio" value="4" id="4">
-        <label class="css-br radio-inline__label" for="4">move</label>
-        <!--<br>-->
-        <!--
-        <input type="range" id="example" min="-3" max="3" step="0.3" value="0.3">
-        <span id="current-value"></span>
-        -->
+      <div id="flex2">
+        <div>
+          <input class="check" type="checkbox" id="time" checked>
+          <label class="check-label" id="timeL" for="time">time</label>
+        </div>
+
+        <div>
+            <input class="check" type="checkbox" id="norm" checked>
+          <label class="check-label" for="norm">norm</label>
+        </div>
+
+        <div>
+          <input class="check" type="checkbox" id="vector" checked>
+          <label class="check-label" for="vector">vector</label>
+        </div>
+
+        <div>
+          <input class="check" type="checkbox" id="force" checked>
+          <label class="check-label" for="force">force</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="1" id="1" checked>
+          <label class="radio-label" for="1">install</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="2" id="2">
+          <label class="radio-label" for="2">delete</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="3" id="3">
+          <label class="radio-label" for="3">fix</label>
+        </div>
+
+        <div>
+          <input class="radio" type="radio" name="radio" value="4" id="4">
+          <label class="radio-label" for="4">move</label>
+        </div>
+
         <div class="range-wrap">
           <div class="range-value" id="rangeV"></div>
-          <input id="range" type="range" min="-3" max="3" value="0.3" step="0.3">
+          <input id="range" type="range" min="-3" max="3" value="1" step="0.1">
         </div>
       </div>
     </div>

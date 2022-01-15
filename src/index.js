@@ -1,19 +1,28 @@
 import { GPU } from 'gpu.js'
-import './index.css'
+import './index.scss'
 import { Charge } from './models/charge.js'
 import { ElectricField } from './models/electric-field.js'
 import { clear, Render, RenderCircle, RenderForce } from './models/render.js'
 // ####################
-const range = document.getElementById('range')
-const rangeV = document.getElementById('rangeV')
-const setValue = () => {
-  const newValue = Number((range.value - range.min) * 100 / (range.max - range.min))
-  const newPosition = 10 - (newValue * 0.2)
-  rangeV.innerHTML = `<span>${range.value}</span>`
-  rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`
+let dark = false
+// if (window.matchMedia('(prefers-color-scheme: dark)').matches === true) {
+//   dark = true
+// } else {
+//   dark = false
+// }
+// ####################
+// const inputElem = document.getElementById('range');
+const currentValueElem = document.getElementById('rangeV')
+const setCurrentValue = (val) => {
+  currentValueElem.innerText = 'charge : ' + val
 }
-document.addEventListener('DOMContentLoaded', setValue)
-range.addEventListener('input', setValue)
+const rangeOnChange = (e) => {
+  setCurrentValue(e.target.value)
+}
+window.onload = () => {
+  inputElem.addEventListener('input', rangeOnChange)
+  setCurrentValue(inputElem.value)
+}
 // ####################
 const canvas = document.getElementById('canvas')
 const gpu = new GPU()
@@ -23,13 +32,13 @@ const height = 300
 canvas.width = width
 canvas.height = height
 
-const test = document.getElementById('test_arrow')
+const test = document.getElementById('canvas2')
 const ctx = test.getContext('2d')
 test.width = 2 * width
 test.height = 2 * height
 
-canvas.style.border = '1px solid'
-test.style.border = '1px solid'
+// canvas.style.border = '1px solid'
+// test.style.border = '1px solid'
 
 let radio = '1'
 document.getElementsByName('radio').forEach(
@@ -49,11 +58,11 @@ document.getElementsByName('radio').forEach(
 //   }
 // })
 const time = document.getElementById('time')
-const render1 = document.getElementById('render1')
+const render1 = document.getElementById('norm')
 
-const render2 = document.getElementById('render2')
+const render2 = document.getElementById('vector')
 
-const render5 = document.getElementById('render5')
+const render5 = document.getElementById('force')
 
 const inputElem = document.getElementById('range')
 /*
@@ -173,8 +182,13 @@ document.addEventListener('mouseup', canvasMouseup, false)
 // let callback
 let render3 = true
 function simulate () {
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches === true) {
+    dark = true
+  } else {
+    dark = false
+  }
   if (c.l === 0) {
-    e.render0Kernel(kernelRender0)
+    e.render0Kernel(kernelRender0, dark)
     clear(width, height, ctx)
     // callback = requestAnimationFrame(simulate)
     requestAnimationFrame(simulate)
@@ -186,23 +200,23 @@ function simulate () {
     }
 
     if (render1.checked) {
-      e.renderRKernel(kernelRenderR)
+      e.renderRKernel(kernelRenderR, dark)
       render3 = true
     } else if (render3) {
-      e.render0Kernel(kernelRender0)
+      e.render0Kernel(kernelRender0, dark)
       render3 = false
     }
 
     if (render2.checked) {
       clear(width, height, ctx)
-      Render(width, height, e.electric_field_r, e.electric_field_theta, ctx)
-      RenderCircle(height, c, ctx)
+      Render(width, height, e.electric_field_r, e.electric_field_theta, ctx, dark)
+      RenderCircle(height, c, ctx, dark)
       if (render5.checked) {
         RenderForce(height, c, ctx)
       }
     } else if (render5.checked) {
       clear(width, height, ctx)
-      RenderCircle(height, c, ctx)
+      RenderCircle(height, c, ctx, dark)
       RenderForce(height, c, ctx)
     } else {
       clear(width, height, ctx)

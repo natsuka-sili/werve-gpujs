@@ -14,7 +14,7 @@ let dark = false
 // const inputElem = document.getElementById('range');
 const currentValueElem = document.getElementById('rangeV')
 const setCurrentValue = (val) => {
-  currentValueElem.innerText = 'charge : ' + val
+  currentValueElem.innerText = 'charge:' + val
 }
 const rangeOnChange = (e) => {
   setCurrentValue(e.target.value)

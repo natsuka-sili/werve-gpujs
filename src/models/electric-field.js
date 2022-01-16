@@ -113,7 +113,7 @@ export class ElectricField {
     if (dark === true) {
       color = 0
     }
-    this.color(color, color, color, color)
+    this.color(color, color, color, 1)
   }
 
   render0Kernel (kernel, dark) {

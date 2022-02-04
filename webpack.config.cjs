@@ -14,7 +14,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src', 'index.html'),
-      filename: 'main.html'// ,
+      filename: 'index.html'// ,
       // favicon: './src/images/favicon.ico'
     }),
 
@@ -25,7 +25,9 @@ module.exports = {
     })
   ],
   devtool: 'source-map',
-  mode: 'development',
+  // mode: 'development',
+  // mode: 'production',
+  mode: 'none',
   module: {
     rules: [
       {

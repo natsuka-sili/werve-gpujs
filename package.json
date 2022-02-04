@@ -40,7 +40,7 @@
     "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.5.1",
     "global": "^4.4.0",
-    "gpu.js": "^2.11.4",
+    "gpu.js": "^2.11.2",
     "sass": "^1.48.0",
     "sass-loader": "^12.4.0",
     "style-loader": "^3.3.1",

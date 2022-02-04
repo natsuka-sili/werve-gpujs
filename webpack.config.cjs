@@ -24,8 +24,11 @@ module.exports = {
     })
   ],
   // devtool: 'source-map',
-  mode: 'development',
-  // mode: 'production',
+  // mode: 'development',
+  mode: 'production',
+  optimization: {
+    minimize: false
+  },
   // mode: 'none',
   module: {
     rules: [

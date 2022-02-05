@@ -52,9 +52,9 @@ module.exports = {
       directory: path.resolve(__dirname, './dist')
     },
     host: '0.0.0.0'
-  },
-  performance: {
-    maxEntrypointSize: 1000000,
-    maxAssetSize: 1000000
-  }
+  // },
+  // performance: {
+  //   maxEntrypointSize: 1000000,
+  //   maxAssetSize: 1000000
+  } // これがあるとyarn build出来ない
 }

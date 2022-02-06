@@ -52,6 +52,9 @@ module.exports = {
       directory: path.resolve(__dirname, './dist')
     },
     host: '0.0.0.0'
+  },
+  performance: {
+    hints: false
   // },
   // performance: {
   //   maxEntrypointSize: 1000000,
